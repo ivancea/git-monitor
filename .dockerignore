@@ -1,0 +1,13 @@
+.git
+.gitignore
+.vscode
+.vs
+bin
+obj
+build
+
+ClientApp/node_modules/
+
+LICENSE
+README.md
+docker-compose.yml
