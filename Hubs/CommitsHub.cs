@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
-namespace GitMonitor
+namespace GitMonitor.Hubs
 {
     /// <summary>
     /// SignalR hub to broadcast new commits.
@@ -11,7 +11,7 @@ namespace GitMonitor
         /// <summary>
         /// Broadcasts new commits message to all clients.
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task BroadcastNewCommits()
         {
             await Clients.All.SendAsync("newCommits");

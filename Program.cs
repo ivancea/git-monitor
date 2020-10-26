@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -12,9 +13,19 @@ namespace GitMonitor
         /// Program entry point.
         /// </summary>
         /// <param name="args">Program arguments.</param>
-        public static void Main(string[] args)
+        /// <returns>1 if there ir an error reading the configuration.</returns>
+        public static int Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            if (!ConfigurationValidation.Validate(host))
+            {
+                return 1;
+            }
+
+            host.Run();
+
+            return 0;
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>

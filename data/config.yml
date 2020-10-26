@@ -1,0 +1,5 @@
+refresh-interval: 5
+
+repositories:
+  test:
+    uri: C:\Users\ivancea\Desktop\git-monitor

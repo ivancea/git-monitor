@@ -6,11 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace GitMonitor.Controllers
 {
+    /// <summary>
+    /// Test controller.
+    /// </summary>
     [ApiController]
-    [Route("[controller]")]
+    [Route(ApiConstants.ApiPath + "test")]
     public class TestController : ControllerBase
     {
-        [HttpGet]
+        /// <summary>
+        /// Test controller endpoint.
+        /// </summary>
+        /// <returns>Test string.</returns>
+        [HttpGet("")]
         public string Get()
         {
             return "Test";

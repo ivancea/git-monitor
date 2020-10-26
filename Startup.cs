@@ -27,7 +27,7 @@ namespace GitMonitor
         /// Startup method called to configure the services of the application.
         /// </summary>
         /// <param name="services">The service collection.</param>
-        public static void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
@@ -40,6 +40,9 @@ namespace GitMonitor
             services.AddSignalR();
 
             services.AddSwaggerGen();
+
+            services.AddServices();
+            services.AddConfigurations(Configuration);
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace GitMonitor
         /// </summary>
         /// <param name="app">The application request pipeline builder.</param>
         /// <param name="env">The application environment information.</param>
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -60,6 +63,7 @@ namespace GitMonitor
             }
 
             app.UseHttpsRedirection();
+            app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
@@ -74,21 +78,25 @@ namespace GitMonitor
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
+                endpoints.MapControllers();
+                /*endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");*/
 
                 // endpoints.MapHub<Test>("/test");
             });
 
-            app.UseSpa(spa =>
+            app.MapWhen(x => !(x.Request.Path.Value?.StartsWith("/api") ?? false), builder =>
             {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
+                builder.UseSpa(spa =>
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
+                    spa.Options.SourcePath = "ClientApp";
+
+                    if (env.IsDevelopment())
+                    {
+                        spa.UseReactDevelopmentServer(npmScript: "start");
+                    }
+                });
             });
         }
     }
