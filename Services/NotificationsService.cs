@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using GitMonitor.Objects;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace GitMonitor.Services
 {
@@ -64,7 +65,7 @@ namespace GitMonitor.Services
                     r => r.descriptor,
                     r => r.changes);
 
-            Logger.LogInformation($"Changes: {string.Join(Environment.NewLine, changes)}");
+            Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
         }
     }
 }
