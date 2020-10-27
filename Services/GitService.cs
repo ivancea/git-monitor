@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using GitMonitor.Configurations;
 using GitMonitor.Objects;
+using GitMonitor.Services.Changes;
+using GitMonitor.Services.ChangesTrackers;
 using LibGit2Sharp;
 using Microsoft.Extensions.Options;
 
@@ -38,19 +40,26 @@ namespace GitMonitor.Services
                 var repository = new Repository(clonePath);
 
                 repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Uri.ToString());
-                repository.Network.Fetch("origin", new[] { "+refs/heads/*:refs/remotes/origin/*" });
+                Update(repository);
             }
             else
             {
                 CloneOptions cloneOptions = new CloneOptions
                 {
                     IsBare = true,
+                    FetchOptions = new FetchOptions
+                    {
+                        TagFetchMode = TagFetchMode.All,
+                        Prune = true,
+                    },
                 };
 
-                Repository.Clone(
-                    repositoryDescriptor.Uri.ToString(),
-                    clonePath,
-                    cloneOptions);
+                Update(
+                    new Repository(
+                        Repository.Clone(
+                            repositoryDescriptor.Uri.ToString(),
+                            clonePath,
+                            cloneOptions)));
             }
         }
 
@@ -59,45 +68,38 @@ namespace GitMonitor.Services
         /// </summary>
         /// <param name="repositoryDescriptor">The repository to fetch.</param>
         /// <returns>A list of changes on the repository.</returns>
-        public List<string> FetchChanges(RepositoryDescriptor repositoryDescriptor)
+        public List<Change> FetchChanges(RepositoryDescriptor repositoryDescriptor)
         {
             string path = Path.Combine(ApplicationOptions.RepositoryClonesPath ?? string.Empty, repositoryDescriptor.Name);
 
             var repository = new Repository(path);
 
-            var oldBranches = repository.Branches
-                .Where(b => b.IsRemote)
-                .ToDictionary(r => r.CanonicalName);
+            var changes = new List<Change>();
 
-            repository.Network.Fetch("origin", new[] { "+refs/heads/*:refs/remotes/origin/*" }, new FetchOptions { Prune = true });
-
-            var changes = new List<string>();
-
-            var branches = repository.Branches
-                .Where(b => b.IsRemote)
-                .ToDictionary(r => r.CanonicalName);
-
-            foreach (var branch in branches.Values)
+            using (new BranchesTracker(repository, changes))
+            using (new TagsTracker(repository, changes))
             {
-                if (oldBranches.TryGetValue(branch.CanonicalName, out var oldBranch))
-                {
-                    if (oldBranch.Tip.Sha != branch.Tip.Sha)
-                    {
-                        changes.Add($"Updated branch '{branch.FriendlyName}'. Now pointing to {branch.Tip.Sha}");
-                    }
-                }
-                else
-                {
-                    changes.Add($"Created branch '{branch.FriendlyName}'. Pointing to {branch.Tip.Sha}");
-                }
-            }
-
-            foreach (var deletedBranch in oldBranches.Values.Where(b => !branches.ContainsKey(b.CanonicalName)))
-            {
-                changes.Add($"Deleted branch '{deletedBranch.FriendlyName}'");
+                Update(repository);
             }
 
             return changes;
+        }
+
+        private void Update(Repository repository)
+        {
+            foreach (var tag in repository.Tags)
+            {
+                repository.Tags.Remove(tag);
+            }
+
+            repository.Network.Fetch(
+                "origin",
+                new[] { "+refs/heads/*:refs/remotes/origin/*" },
+                new FetchOptions
+                {
+                    TagFetchMode = TagFetchMode.All,
+                    Prune = true,
+                });
         }
     }
 }
