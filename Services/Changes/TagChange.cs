@@ -13,13 +13,13 @@ namespace GitMonitor.Services.Changes
         /// <param name="type">The type of the change.</param>
         /// <param name="tag">The changed tag.</param>
         public TagChange(ChangeType type, Tag tag)
-            : base(ChangeObjectType.Branch, type, tag.FriendlyName)
+            : base(ChangeObjectType.Tag, type, tag.FriendlyName)
         {
             TargetCommit = tag.PeeledTarget.Sha;
 
             if (tag.Annotation is not null)
             {
-                Message = tag.Annotation?.Message;
+                Message = tag.Annotation.Message;
                 Tagger = new ChangeUser(tag.Annotation.Tagger);
             }
         }

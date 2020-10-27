@@ -13,7 +13,7 @@ namespace GitMonitor.Services.Changes
         /// <param name="type">The type of the change.</param>
         /// <param name="branch">The changed branch.</param>
         public BranchChange(ChangeType type, Branch branch)
-            : base(ChangeObjectType.Branch, type, branch.FriendlyName)
+            : base(ChangeObjectType.Branch, type, MakeBranchName(branch))
         {
             TargetCommit = branch.Tip.Sha;
         }
@@ -23,5 +23,12 @@ namespace GitMonitor.Services.Changes
         /// </summary>
         /// <value>The target commit hash.</value>
         public string TargetCommit { get; }
+
+        private static string MakeBranchName(Branch branch)
+        {
+            return branch.IsRemote
+                ? branch.FriendlyName.Remove(0, branch.RemoteName.Length + 1)
+                : branch.FriendlyName;
+        }
     }
 }
