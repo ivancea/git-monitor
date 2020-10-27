@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GitMonitor.Configurations;
 using GitMonitor.Objects;
 using LibGit2Sharp;
@@ -64,9 +65,39 @@ namespace GitMonitor.Services
 
             var repository = new Repository(path);
 
-            repository.Network.Fetch("origin", new[] { "+refs/heads/*:refs/remotes/origin/*" });
+            var oldBranches = repository.Branches
+                .Where(b => b.IsRemote)
+                .ToDictionary(r => r.CanonicalName);
 
-            throw new NotImplementedException();
+            repository.Network.Fetch("origin", new[] { "+refs/heads/*:refs/remotes/origin/*" }, new FetchOptions { Prune = true });
+
+            var changes = new List<string>();
+
+            var branches = repository.Branches
+                .Where(b => b.IsRemote)
+                .ToDictionary(r => r.CanonicalName);
+
+            foreach (var branch in branches.Values)
+            {
+                if (oldBranches.TryGetValue(branch.CanonicalName, out var oldBranch))
+                {
+                    if (oldBranch.Tip.Sha != branch.Tip.Sha)
+                    {
+                        changes.Add($"Updated branch '{branch.FriendlyName}'. Now pointing to {branch.Tip.Sha}");
+                    }
+                }
+                else
+                {
+                    changes.Add($"Created branch '{branch.FriendlyName}'. Pointing to {branch.Tip.Sha}");
+                }
+            }
+
+            foreach (var deletedBranch in oldBranches.Values.Where(b => !branches.ContainsKey(b.CanonicalName)))
+            {
+                changes.Add($"Deleted branch '{deletedBranch.FriendlyName}'");
+            }
+
+            return changes;
         }
     }
 }

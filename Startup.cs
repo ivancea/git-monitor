@@ -41,8 +41,7 @@ namespace GitMonitor
 
             services.AddSwaggerGen();
 
-            services.AddServices();
-            services.AddConfigurations(Configuration);
+            services.AddDependencies(Configuration);
         }
 
         /// <summary>

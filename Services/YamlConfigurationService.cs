@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,28 +24,35 @@ namespace GitMonitor
         /// Initializes a new instance of the <see cref="YamlConfigurationService"/> class.
         /// </summary>
         /// <param name="applicationConfiguration">The application configuration.</param>
-        /// <param name="gitService">The service that manages git repositories.</param>
-        public YamlConfigurationService(IOptions<ApplicationOptions> applicationConfiguration, GitService gitService)
+        public YamlConfigurationService(IOptions<ApplicationOptions> applicationConfiguration)
         {
             ApplicationConfiguration = applicationConfiguration.Value;
-            GitService = gitService;
 
             Deserializer = new DeserializerBuilder()
                 .WithNamingConvention(HyphenatedNamingConvention.Instance)
                 .Build();
         }
 
-        private ApplicationOptions ApplicationConfiguration { get; }
+        /// <summary>
+        /// Gets or sets the YAML user configuration.
+        /// </summary>
+        /// <value>The YAML user configuration.</value>
+        public YamlConfiguration? YamlConfiguration { get; set; }
 
-        private GitService GitService { get; }
+        /// <summary>
+        /// Gets or sets the configured repositories.
+        /// </summary>
+        /// <value>The configured repositories.</value>
+        public List<RepositoryDescriptor>? Repositories { get; set; }
+
+        private ApplicationOptions ApplicationConfiguration { get; }
 
         private IDeserializer Deserializer { get; }
 
         /// <summary>
-        /// Reads the YAML configuration and initialices services with it.
-        /// This method should be called just once.
+        /// Reads the YAML configuration and validates it it.
         /// </summary>
-        public void ConfigureApplication()
+        public void LoadConfiguration()
         {
             try
             {
@@ -67,11 +75,9 @@ namespace GitMonitor
                     throw new YamlConfigurationValidationException("No repositories found in configuration");
                 }
 
-                foreach (var entry in yamlConfiguration.Repositories)
-                {
-                }
+                YamlConfiguration = yamlConfiguration;
 
-                var repositories = yamlConfiguration.Repositories
+                Repositories = yamlConfiguration.Repositories
                     .Select(entry =>
                     {
                         if (entry.Value.Uri is null)
@@ -82,8 +88,6 @@ namespace GitMonitor
                         return new RepositoryDescriptor(entry.Key, entry.Value.Uri);
                     })
                     .ToList();
-
-                repositories.ForEach(GitService.InitializeRepository);
             }
             catch (FileNotFoundException exc)
             {

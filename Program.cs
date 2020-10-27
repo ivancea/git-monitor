@@ -16,14 +16,16 @@ namespace GitMonitor
         /// <returns>1 if there ir an error reading the configuration.</returns>
         public static int Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-
-            if (!ConfigurationValidation.Validate(host))
+            try
             {
+                CreateHostBuilder(args).Build().Run();
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"Error: {exc}");
+
                 return 1;
             }
-
-            host.Run();
 
             return 0;
         }

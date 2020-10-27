@@ -1,4 +1,4 @@
-refresh-interval: 5
+refresh-interval: 1
 
 repositories:
   test:
