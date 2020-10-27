@@ -62,7 +62,7 @@ namespace GitMonitor.Services
                 })
                 .Where(r => r.changes.Count > 0)
                 .ToDictionary(
-                    r => r.descriptor,
+                    r => r.descriptor.Name,
                     r => r.changes);
 
             Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
