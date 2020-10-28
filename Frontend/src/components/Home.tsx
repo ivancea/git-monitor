@@ -15,7 +15,10 @@ export function Home(): React.ReactElement {
       .withUrl(config.url.API + "hubs/changes")
       .build();
 
-    newHub.on("changes", (newChanges: any) => setChanges(changes));
+    newHub.on("changes", (newChanges: any) => {
+      console.log(JSON.stringify(newChanges, null, 4));
+      setChanges(newChanges);
+    });
 
     newHub.start().catch((e) => setError(e));
 
