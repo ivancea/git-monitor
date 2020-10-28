@@ -1,4 +1,4 @@
-namespace GitMonitor.Services.Changes
+namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// The type of a change.

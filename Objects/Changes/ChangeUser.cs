@@ -1,6 +1,6 @@
 using LibGit2Sharp;
 
-namespace GitMonitor.Services.Changes
+namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// A change user information.

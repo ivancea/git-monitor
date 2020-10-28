@@ -1,4 +1,4 @@
-namespace GitMonitor.Services.Changes
+namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// Base object that represents a change in a git repository.

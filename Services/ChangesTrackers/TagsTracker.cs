@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GitMonitor.Services.Changes;
+using GitMonitor.Objects.Changes;
 using LibGit2Sharp;
 
 namespace GitMonitor.Services.ChangesTrackers

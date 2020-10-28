@@ -1,6 +1,6 @@
 using LibGit2Sharp;
 
-namespace GitMonitor.Services.Changes
+namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// Object that represents a tag change in a git repository.

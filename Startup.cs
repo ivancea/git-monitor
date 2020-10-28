@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GitMonitor.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -92,7 +93,7 @@ namespace GitMonitor
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");*/
 
-                // endpoints.MapHub<Test>("/test");
+                endpoints.MapHub<RepositoryChangesHub>("/changes");
             });
 
             app.MapWhen(x => !(x.Request.Path.Value?.StartsWith("/api") ?? false), builder =>

@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using GitMonitor.Configurations;
 using GitMonitor.Objects;
-using GitMonitor.Services.Changes;
+using GitMonitor.Objects.Changes;
 using GitMonitor.Services.ChangesTrackers;
 using LibGit2Sharp;
 using Microsoft.Extensions.Options;

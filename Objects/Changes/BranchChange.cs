@@ -1,6 +1,6 @@
 using LibGit2Sharp;
 
-namespace GitMonitor.Services.Changes
+namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// Object that represents a branch change in a git repository.
