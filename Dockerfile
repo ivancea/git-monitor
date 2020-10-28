@@ -7,9 +7,9 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
 COPY *.csproj ./
 RUN dotnet restore
 
-COPY ./ClientApp/package*.json ./ClientApp/
+COPY ./Frontend/package*.json ./Frontend/
 
-RUN cd ClientApp \
+RUN cd Frontend \
     && npm install
 
 COPY . .

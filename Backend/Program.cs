@@ -13,7 +13,7 @@ namespace GitMonitor
         /// Program entry point.
         /// </summary>
         /// <param name="args">Program arguments.</param>
-        /// <returns>1 if there ir an error reading the configuration.</returns>
+        /// <returns>1 if there is an error reading the configuration.</returns>
         public static int Main(string[] args)
         {
             try

@@ -55,19 +55,5 @@ namespace GitMonitor.Services.ChangesTrackers
                 Changes.Add(new TagChange(ChangeType.Deleted, deletedTag));
             }
         }
-
-        private string Format(Tag tag)
-        {
-            StringBuilder formattedTag = new StringBuilder();
-
-            formattedTag.Append($"'{tag.FriendlyName}'");
-
-            if (tag.Annotation is not null)
-            {
-                formattedTag.Append($" (Message: {tag.Annotation.Message}, Tagger: {tag.Annotation.Tagger})");
-            }
-
-            return formattedTag.ToString();
-        }
     }
 }

@@ -8,7 +8,7 @@ bin
 obj
 build
 
-ClientApp/node_modules/
+Frontend/node_modules/
 
 LICENSE
 README.md
