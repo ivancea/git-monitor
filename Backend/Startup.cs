@@ -50,6 +50,17 @@ namespace GitMonitor
                         .Add(new JsonStringEnumConverter());
                 });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("DevelopmentFrontend", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
+                });
+            });
+
             services.AddSwaggerGen();
 
             services.AddDependencies(Configuration);
@@ -84,16 +95,15 @@ namespace GitMonitor
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
+            app.UseCors("DevelopmentFrontend");
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                /*endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");*/
 
-                endpoints.MapHub<RepositoryChangesHub>("/changes");
+                endpoints.MapHub<RepositoryChangesHub>("/hubs/changes");
             });
 
             app.MapWhen(x => !(x.Request.Path.Value?.StartsWith("/api") ?? false), builder =>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Collapse,
   Container,
@@ -15,7 +15,7 @@ type State = {
   collapsed: boolean;
 };
 
-export class NavMenu extends Component<unknown, State> {
+export class NavMenu extends React.PureComponent<unknown, State> {
   constructor(props: unknown) {
     super(props);
 
