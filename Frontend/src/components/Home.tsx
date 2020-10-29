@@ -35,8 +35,8 @@ export function Home(): React.ReactElement {
 
         const newHub = new signalR.HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
 
-        newHub.on("changes", (newChanges: Changes) => {
-            const wrappedChanges = Object.entries(newChanges).flatMap((e) =>
+        newHub.on("changes", (newChanges: string) => {
+            const wrappedChanges = Object.entries(JSON.parse(newChanges) as Changes).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
                     repository: e[0],
                     date: new Date(),
