@@ -35,8 +35,9 @@ export function Home(): React.ReactElement {
 
         const newHub = new signalR.HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
 
-        newHub.on("changes", (newChanges: string) => {
-            const wrappedChanges = Object.entries(JSON.parse(newChanges) as Changes).flatMap((e) =>
+        newHub.on("changes", (newChangesJson: string) => {
+            const newChanges: Changes = JSON.parse(newChangesJson);
+            const wrappedChanges = Object.entries(newChanges).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
                     repository: e[0],
                     date: new Date(),
@@ -45,7 +46,13 @@ export function Home(): React.ReactElement {
                 })),
             );
 
-            new Notification(wrappedChanges.length + " new changes");
+            new Notification(
+                wrappedChanges.length +
+                    " new change" +
+                    (wrappedChanges.length > 1 ? "s" : "") +
+                    " in " +
+                    Object.keys(newChanges).sort().join(", "),
+            );
 
             setChanges((c) => [...c, ...wrappedChanges]);
         });
