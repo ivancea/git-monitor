@@ -38,6 +38,8 @@ namespace GitMonitor.Services
             {
                 var repository = new Repository(clonePath);
 
+                SetConfigs(repository, repositoryDescriptor);
+
                 repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Url.ToString());
                 Update(repository, repositoryDescriptor);
             }
@@ -50,13 +52,15 @@ namespace GitMonitor.Services
                     CredentialsProvider = MakeCredentialsProvider(repositoryDescriptor),
                 };
 
-                Update(
-                    new Repository(
-                        Repository.Clone(
-                            repositoryDescriptor.Url.ToString(),
-                            clonePath,
-                            cloneOptions)),
-                    repositoryDescriptor);
+                var repository = new Repository(
+                    Repository.Clone(
+                        repositoryDescriptor.Url.ToString(),
+                        clonePath,
+                        cloneOptions));
+
+                SetConfigs(repository, repositoryDescriptor);
+
+                Update(repository, repositoryDescriptor);
             }
         }
 
@@ -120,6 +124,14 @@ namespace GitMonitor.Services
             }
 
             return null;
+        }
+
+        private void SetConfigs(Repository repository, RepositoryDescriptor repositoryDescriptor)
+        {
+            foreach (var config in repositoryDescriptor.Config)
+            {
+                repository.Config.Set(config.Key, config.Value);
+            }
         }
     }
 }

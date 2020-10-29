@@ -101,7 +101,7 @@ namespace GitMonitor
                             credentials = new RepositoryCredentials(entry.Value.Username, entry.Value.Password);
                         }
 
-                        return new RepositoryDescriptor(entry.Key, entry.Value.Url, credentials);
+                        return new RepositoryDescriptor(entry.Key, entry.Value.Url, credentials, entry.Value.Config);
                     })
                     .ToList();
             }

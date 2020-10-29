@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace GitMonitor.Objects
 {
@@ -13,11 +15,13 @@ namespace GitMonitor.Objects
         /// <param name="name">The name of the repository.</param>
         /// <param name="url">The URL of the repository.</param>
         /// <param name="credentials">The remote repository credentials.</param>
-        public RepositoryDescriptor(string name, Uri url, RepositoryCredentials? credentials)
+        /// <param name="config">The repository configuration.</param>
+        public RepositoryDescriptor(string name, Uri url, RepositoryCredentials? credentials, Dictionary<string, string> config)
         {
             Name = name;
             Url = url;
             Credentials = credentials;
+            Config = config.ToImmutableDictionary();
         }
 
         /// <summary>
@@ -37,5 +41,11 @@ namespace GitMonitor.Objects
         /// </summary>
         /// <value>The remote repository credentials.</value>
         public RepositoryCredentials? Credentials { get; }
+
+        /// <summary>
+        /// Gets the repository configuration.
+        /// </summary>
+        /// <value>The repository configuration.</value>
+        public IReadOnlyDictionary<string, string> Config { get; } = new Dictionary<string, string>();
     }
 }

@@ -42,6 +42,12 @@ namespace GitMonitor.Configurations
             /// </summary>
             /// <value>The remote repository password.</value>
             public string? Password { get; set; }
+
+            /// <summary>
+            /// Gets or sets the repository configuration.
+            /// </summary>
+            /// <value>The repository configuration.</value>
+            public Dictionary<string, string> Config { get; set; } = new Dictionary<string, string>();
         }
     }
 }
