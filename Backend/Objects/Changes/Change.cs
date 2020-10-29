@@ -11,6 +11,7 @@ namespace GitMonitor.Objects.Changes
         /// <param name="objectType">The changed object type.</param>
         /// <param name="type">The type of the change.</param>
         /// <param name="objectName">The name of the changed object.</param>
+        /// <param name="user">The user that made the change.</param>
         protected Change(ChangeObjectType objectType, ChangeType type, string objectName)
         {
             ObjectType = objectType;
@@ -35,5 +36,11 @@ namespace GitMonitor.Objects.Changes
         /// </summary>
         /// <value>The name of the changed object.</value>
         public string ObjectName { get; }
+
+        /// <summary>
+        /// Gets or sets the user that made the change.
+        /// </summary>
+        /// <value>The user that made the change.</value>
+        public ChangeUser? User { get; protected set; }
     }
 }

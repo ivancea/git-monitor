@@ -19,8 +19,8 @@ namespace GitMonitor.Objects.Changes
 
             if (tag.Annotation is not null)
             {
+                User = new ChangeUser(tag.Annotation.Tagger);
                 Message = tag.Annotation.Message;
-                Tagger = new ChangeUser(tag.Annotation.Tagger);
             }
         }
 
@@ -35,11 +35,5 @@ namespace GitMonitor.Objects.Changes
         /// </summary>
         /// <value>The annotated tag message.</value>
         public string? Message { get; }
-
-        /// <summary>
-        /// Gets the tagger.
-        /// </summary>
-        /// <value>The tagger.</value>
-        public ChangeUser? Tagger { get; }
     }
 }

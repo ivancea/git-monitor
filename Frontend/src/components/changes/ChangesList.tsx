@@ -5,17 +5,13 @@ import { Change } from './Change';
 import './changes.scss';
 
 type Props = {
-  changes: ChangeWrapper[];
+    changes: ChangeWrapper[];
 };
 
 export function ChangesList({ changes }: Props): React.ReactElement {
-  return (
-    <>
-      <ListGroup>
-        {changes
-          .map((change, index) => <Change key={index} change={change} />)
-          .reverse()}
-      </ListGroup>
-    </>
-  );
+    return (
+        <>
+            <ListGroup>{changes.map((change, index) => <Change key={index} change={change} />).reverse()}</ListGroup>
+        </>
+    );
 }
