@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { config } from "../Config";
 import { Alert, Button } from "reactstrap";
-import { cloneDeep, isNil } from "lodash";
+import { cloneDeep } from "lodash";
 import { Changes, ChangeWrapper } from "../types/changes";
 import { ChangesList } from "./changes/ChangesList";
 import { HubConnectionBuilder } from "@microsoft/signalr";

@@ -30,11 +30,11 @@ namespace GitMonitor.Services
             RepositoryChangesHub = repositoryChangesHub;
         }
 
-        private ILogger Logger { get; set; }
+        private ILogger Logger { get; }
 
-        private GitService GitService { get; set; }
+        private GitService GitService { get; }
 
-        private IHubContext<RepositoryChangesHub> RepositoryChangesHub { get; set; }
+        private IHubContext<RepositoryChangesHub> RepositoryChangesHub { get; }
 
         private Timer? Timer { get; set; }
 
