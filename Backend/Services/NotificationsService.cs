@@ -8,6 +8,7 @@ using GitMonitor.Objects;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace GitMonitor.Services
 {
@@ -75,7 +76,11 @@ namespace GitMonitor.Services
 
             if (changes.Count > 0)
             {
-                await RepositoryChangesHub.Clients.All.SendAsync("changes", JsonConvert.SerializeObject(changes));
+                var serializedChanges = JsonConvert.SerializeObject(changes, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                });
+                await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
                 Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
             }
             else
