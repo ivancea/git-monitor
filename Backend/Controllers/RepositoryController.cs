@@ -29,7 +29,7 @@ namespace GitMonitor.Controllers
 
         private GitService GitService { get; }
 
-        [HttpGet("/diff")]
+        [HttpGet("diff")]
         public ActionResult<string> GetDiff(string repositoryName, string commitHash)
         {
             var repositoryDescriptor = YamlConfigurationService.Repositories?.Find(r => r.Name == repositoryName);
