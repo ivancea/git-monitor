@@ -84,7 +84,24 @@ namespace GitMonitor
                             throw new YamlConfigurationValidationException($"Repository '{entry.Key}' without uri");
                         }
 
-                        return new RepositoryDescriptor(entry.Key, entry.Value.Url);
+                        RepositoryCredentials? credentials = null;
+
+                        if (entry.Value.Username != null || entry.Value.Password != null)
+                        {
+                            if (entry.Value.Username == null)
+                            {
+                                throw new YamlConfigurationValidationException($"Repository '{entry.Key}' with username but without password");
+                            }
+
+                            if (entry.Value.Password == null)
+                            {
+                                throw new YamlConfigurationValidationException($"Repository '{entry.Key}' with password but without username");
+                            }
+
+                            credentials = new RepositoryCredentials(entry.Value.Username, entry.Value.Password);
+                        }
+
+                        return new RepositoryDescriptor(entry.Key, entry.Value.Url, credentials);
                     })
                     .ToList();
             }
