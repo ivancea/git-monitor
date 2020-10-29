@@ -68,13 +68,19 @@ export function Home(): React.ReactElement {
 
     return (
         <div>
-            <Alert color="danger" isOpen={!isNil(error)} toggle={toggleError}>
+            <Alert color="danger" isOpen={!!error} toggle={toggleError}>
                 {error}
             </Alert>
-            <Button color="success" onClick={markAllAsRead}>
-                Mark all as read
-            </Button>
-            <ChangesList changes={changes} />
+            {changes.length == 0 ? (
+                "No changes yet"
+            ) : (
+                <>
+                    <Button color="success" onClick={markAllAsRead}>
+                        Mark all as read
+                    </Button>
+                    <ChangesList changes={changes} />
+                </>
+            )}
         </div>
     );
 }
