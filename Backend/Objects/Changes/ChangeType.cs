@@ -1,11 +1,12 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace GitMonitor.Objects.Changes
 {
     /// <summary>
     /// The type of a change.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum ChangeType
     {
         /// <summary>
