@@ -37,7 +37,7 @@ namespace GitMonitor.Services
             {
                 var repository = new Repository(clonePath);
 
-                repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Uri.ToString());
+                repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Url.ToString());
                 Update(repository);
             }
             else
@@ -55,7 +55,7 @@ namespace GitMonitor.Services
                 Update(
                     new Repository(
                         Repository.Clone(
-                            repositoryDescriptor.Uri.ToString(),
+                            repositoryDescriptor.Url.ToString(),
                             clonePath,
                             cloneOptions)));
             }

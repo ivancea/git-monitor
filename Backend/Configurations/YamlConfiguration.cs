@@ -26,10 +26,10 @@ namespace GitMonitor.Configurations
         public class Repository
         {
             /// <summary>
-            /// Gets or sets repository URI.
+            /// Gets or sets repository URL.
             /// </summary>
-            /// <value>Repository URI.</value>
-            public Uri? Uri { get; set; }
+            /// <value>Repository URL.</value>
+            public Uri? Url { get; set; }
         }
     }
 }

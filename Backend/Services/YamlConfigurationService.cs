@@ -79,12 +79,12 @@ namespace GitMonitor
                 Repositories = yamlConfiguration.Repositories
                     .Select(entry =>
                     {
-                        if (entry.Value.Uri is null)
+                        if (entry.Value.Url is null)
                         {
                             throw new YamlConfigurationValidationException($"Repository '{entry.Key}' without uri");
                         }
 
-                        return new RepositoryDescriptor(entry.Key, entry.Value.Uri);
+                        return new RepositoryDescriptor(entry.Key, entry.Value.Url);
                     })
                     .ToList();
             }

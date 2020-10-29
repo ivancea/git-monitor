@@ -11,11 +11,11 @@ namespace GitMonitor.Objects
         /// Initializes a new instance of the <see cref="RepositoryDescriptor"/> class.
         /// </summary>
         /// <param name="name">The name of the repository.</param>
-        /// <param name="uri">The URI of the repository.</param>
-        public RepositoryDescriptor(string name, Uri uri)
+        /// <param name="uri">The URL of the repository.</param>
+        public RepositoryDescriptor(string name, Uri url)
         {
             Name = name;
-            Uri = uri;
+            Url = url;
         }
 
         /// <summary>
@@ -25,9 +25,9 @@ namespace GitMonitor.Objects
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the uri of the repository.
+        /// Gets or sets the URL of the repository.
         /// </summary>
-        /// <value>The uri of the repository.</value>
-        public Uri Uri { get; set; }
+        /// <value>The URL of the repository.</value>
+        public Uri Url { get; set; }
     }
 }
