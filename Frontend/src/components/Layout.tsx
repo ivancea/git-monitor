@@ -1,6 +1,6 @@
-import React from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
+import React from "react";
+import { Container } from "reactstrap";
+import { NavMenu } from "./NavMenu";
 
 type Props = {
     children?: React.ReactNode;

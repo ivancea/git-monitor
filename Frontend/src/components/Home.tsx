@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { config } from '../Config';
-import * as signalR from '@microsoft/signalr';
-import { Alert, Button, Spinner } from 'reactstrap';
-import { cloneDeep, isNil } from 'lodash';
-import { ChangeObjectType, Changes, ChangeType, ChangeWrapper, CommitChange } from '../types/changes';
-import { ChangesList } from './changes/ChangesList';
-import { as } from '../utils';
+import React, { useEffect, useState } from "react";
+import { config } from "../Config";
+import * as signalR from "@microsoft/signalr";
+import { Alert, Button } from "reactstrap";
+import { cloneDeep, isNil } from "lodash";
+import { ChangeObjectType, Changes, ChangeType, ChangeWrapper, CommitChange } from "../types/changes";
+import { ChangesList } from "./changes/ChangesList";
+import { as } from "../utils";
 
 export function Home(): React.ReactElement {
-    const [hub, setHub] = useState<signalR.HubConnection>();
     const [error, setError] = useState<string>();
     const [changes, setChanges] = useState<ChangeWrapper[]>([
         {
-            repository: 'Test repository',
+            repository: "Test repository",
             seen: false,
             date: new Date(),
             change: as<CommitChange>({
                 objectType: ChangeObjectType.Commit,
                 type: ChangeType.Created,
-                objectName: 'Message',
+                objectName: "Message",
                 user: {
-                    name: 'Iván Cea Fontenla',
-                    email: 'ivancea96@outlook.com',
+                    name: "Iván Cea Fontenla",
+                    email: "ivancea96@outlook.com",
                 },
-                hash: 'CommitSHA',
-                message: 'Message\nLong message',
+                hash: "CommitSHA",
+                message: "Message\nLong message",
             }),
         },
     ]);
@@ -32,9 +31,11 @@ export function Home(): React.ReactElement {
     useEffect(() => {
         Notification.requestPermission();
 
-        const newHub = new signalR.HubConnectionBuilder().withUrl(config.url.API + 'hubs/changes').build();
+        setError("Connecting...");
 
-        newHub.on('changes', (newChanges: Changes) => {
+        const newHub = new signalR.HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
+
+        newHub.on("changes", (newChanges: Changes) => {
             const wrappedChanges = Object.entries(newChanges).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
                     repository: e[0],
@@ -44,15 +45,30 @@ export function Home(): React.ReactElement {
                 })),
             );
 
-            new Notification(wrappedChanges.length + ' new changes');
+            new Notification(wrappedChanges.length + " new changes");
 
             setChanges((c) => [...c, ...wrappedChanges]);
         });
 
-        newHub
-            .start()
-            .then(() => setHub(newHub))
-            .catch((e) => setError(e));
+        newHub.onreconnecting((e) => setError("Reconnecting to the server..." + (e ? ` (${e.message})` : undefined)));
+
+        newHub.onclose(() => {
+            setError("Disconnected from the server, reconnecting...");
+            connect();
+        });
+
+        connect();
+
+        function connect(): void {
+            newHub
+                .start()
+                .then(() => setError(undefined))
+                .catch((e) => {
+                    setError("Error connecting to the server: " + JSON.stringify(e));
+
+                    setTimeout(connect, 5000);
+                });
+        }
     }, []);
 
     const toggleError = React.useCallback(() => setError(undefined), [setError]);
@@ -61,14 +77,10 @@ export function Home(): React.ReactElement {
         setChanges((oldChanges) => oldChanges.map((change) => ({ ...cloneDeep(change), seen: true })));
     }, [setChanges]);
 
-    if (isNil(hub) && !isNil(error)) {
-        return <Spinner color="primary" />;
-    }
-
     return (
         <div>
             <Alert color="danger" isOpen={!isNil(error)} toggle={toggleError}>
-                {JSON.stringify(error, null, 4)}
+                {error}
             </Alert>
             <Button color="success" onClick={markAllAsRead}>
                 Mark all as read

@@ -1,8 +1,8 @@
-import React from 'react';
-import { ListGroup } from 'reactstrap';
-import { ChangeWrapper } from '../../types/changes';
-import { Change } from './Change';
-import './changes.scss';
+import React from "react";
+import { ListGroup } from "reactstrap";
+import { ChangeWrapper } from "../../types/changes";
+import { Change } from "./Change";
+import "./changes.scss";
 
 type Props = {
     changes: ChangeWrapper[];

@@ -15,15 +15,15 @@ export type Change = {
 };
 
 export enum ChangeObjectType {
-    Branch = 'Branch',
-    Tag = 'Tag',
-    Commit = 'Commit',
+    Branch = "Branch",
+    Tag = "Tag",
+    Commit = "Commit",
 }
 
 export enum ChangeType {
-    Created = 'Created',
-    Updated = 'Updated',
-    Deleted = 'Deleted',
+    Created = "Created",
+    Updated = "Updated",
+    Deleted = "Deleted",
 }
 
 export type ChangeUser = {

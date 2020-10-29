@@ -1,5 +1,5 @@
-import React from 'react';
-import { Change, isBranchChange, isCommitChange, isTagChange } from '../../types/changes';
+import React from "react";
+import { Change, isBranchChange, isCommitChange, isTagChange } from "../../types/changes";
 
 type Props = {
     change: Change;
