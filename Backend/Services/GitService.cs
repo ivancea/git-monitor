@@ -5,6 +5,7 @@ using GitMonitor.Objects;
 using GitMonitor.Objects.Changes;
 using GitMonitor.Services.ChangesTrackers;
 using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
 using Microsoft.Extensions.Options;
 
 namespace GitMonitor.Services
@@ -37,27 +38,29 @@ namespace GitMonitor.Services
             {
                 var repository = new Repository(clonePath);
 
+                SetConfigs(repository, repositoryDescriptor);
+
                 repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Url.ToString());
-                Update(repository);
+                Update(repository, repositoryDescriptor);
             }
             else
             {
                 CloneOptions cloneOptions = new CloneOptions
                 {
                     IsBare = true,
-                    FetchOptions = new FetchOptions
-                    {
-                        TagFetchMode = TagFetchMode.All,
-                        Prune = true,
-                    },
+                    FetchOptions = MakeFetchOptions(repositoryDescriptor),
+                    CredentialsProvider = MakeCredentialsProvider(repositoryDescriptor),
                 };
 
-                Update(
-                    new Repository(
-                        Repository.Clone(
-                            repositoryDescriptor.Url.ToString(),
-                            clonePath,
-                            cloneOptions)));
+                var repository = new Repository(
+                    Repository.Clone(
+                        repositoryDescriptor.Url.ToString(),
+                        clonePath,
+                        cloneOptions));
+
+                SetConfigs(repository, repositoryDescriptor);
+
+                Update(repository, repositoryDescriptor);
             }
         }
 
@@ -78,13 +81,13 @@ namespace GitMonitor.Services
             using (new BranchesTracker(repository, changes))
             using (new TagsTracker(repository, changes))
             {
-                Update(repository);
+                Update(repository, repositoryDescriptor);
             }
 
             return changes;
         }
 
-        private void Update(Repository repository)
+        private void Update(Repository repository, RepositoryDescriptor repositoryDescriptor)
         {
             foreach (var tag in repository.Tags)
             {
@@ -94,11 +97,41 @@ namespace GitMonitor.Services
             repository.Network.Fetch(
                 "origin",
                 new[] { "+refs/heads/*:refs/remotes/origin/*" },
-                new FetchOptions
+                MakeFetchOptions(repositoryDescriptor));
+        }
+
+        private FetchOptions MakeFetchOptions(RepositoryDescriptor repositoryDescriptor)
+        {
+            var fetchOptions = new FetchOptions
+            {
+                TagFetchMode = TagFetchMode.All,
+                Prune = true,
+                CredentialsProvider = MakeCredentialsProvider(repositoryDescriptor),
+            };
+
+            return fetchOptions;
+        }
+
+        private CredentialsHandler? MakeCredentialsProvider(RepositoryDescriptor repositoryDescriptor)
+        {
+            if (repositoryDescriptor.Credentials != null)
+            {
+                return (url, user, cred) => new UsernamePasswordCredentials
                 {
-                    TagFetchMode = TagFetchMode.All,
-                    Prune = true,
-                });
+                    Username = repositoryDescriptor.Credentials.Username,
+                    Password = repositoryDescriptor.Credentials.Password,
+                };
+            }
+
+            return null;
+        }
+
+        private void SetConfigs(Repository repository, RepositoryDescriptor repositoryDescriptor)
+        {
+            foreach (var config in repositoryDescriptor.Config)
+            {
+                repository.Config.Set(config.Key, config.Value);
+            }
         }
     }
 }

@@ -30,6 +30,24 @@ namespace GitMonitor.Configurations
             /// </summary>
             /// <value>Repository URL.</value>
             public Uri? Url { get; set; }
+
+            /// <summary>
+            /// Gets or sets the remote repository username.
+            /// </summary>
+            /// <value>The remote repository username.</value>
+            public string? Username { get; set; }
+
+            /// <summary>
+            /// Gets or sets the remote repository password.
+            /// </summary>
+            /// <value>The remote repository password.</value>
+            public string? Password { get; set; }
+
+            /// <summary>
+            /// Gets or sets the repository configuration.
+            /// </summary>
+            /// <value>The repository configuration.</value>
+            public Dictionary<string, string> Config { get; set; } = new Dictionary<string, string>();
         }
     }
 }
