@@ -1,6 +1,6 @@
 # Git monitor
 
-Git monitor is an application that will help you track changes in every repository you configure.
+Git monitor is a web application that will help you track changes in every repository you configure, sending notifications for every change.
 
 Currently, it tracks:
 - Commits (new, deleted). 
@@ -32,5 +32,8 @@ repositories: # N repositories to monitor
   <repository-name>: # A unique ID of the repository. Used in the notifications
     url: ./data/test # Git repository URL. Accepts any URL a git remote accepts
 ```
-2. Set the YAML path in `appsettings.json`, `"Application"."ConfigPath"`. If using docker-compose, the YAML and the repository (if local) must be in a volume, and the local repositories path must be valid from inside the docker container. Check the volume in `docker-compose.yml` or set your own
+2. Configure the YAML path:
+   - In `appsettings.json`, `"Application"."ConfigPath"` (Already configured)
+   - In the environment variable `Application__ConfigPath` (Already configured in `docker-compose.yml`)
+   - If using docker-compose, the YAML and the repository (if local) must be in a volume, and the local repositories path must be valid from inside the docker container. Check the volume in `docker-compose.yml` or set your own
 3. Launch the application with `dotnet run` or `docker-compose up`.
