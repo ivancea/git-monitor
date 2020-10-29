@@ -43,12 +43,7 @@ namespace GitMonitor
                 configuration.RootPath = "Frontend/build";
             });
 
-            services.AddSignalR()
-                .AddJsonProtocol(options =>
-                {
-                    options.PayloadSerializerOptions.Converters
-                        .Add(new JsonStringEnumConverter());
-                });
+            services.AddSignalR();
 
             services.AddCors(options =>
             {
