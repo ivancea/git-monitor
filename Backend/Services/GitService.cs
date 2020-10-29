@@ -74,6 +74,7 @@ namespace GitMonitor.Services
 
             var changes = new List<Change>();
 
+            using (new CommitsTracker(repository, changes))
             using (new BranchesTracker(repository, changes))
             using (new TagsTracker(repository, changes))
             {
