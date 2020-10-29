@@ -76,9 +76,12 @@ namespace GitMonitor.Services
             if (changes.Count > 0)
             {
                 await RepositoryChangesHub.Clients.All.SendAsync("changes", changes);
+                Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
             }
-
-            Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
+            else
+            {
+                Logger.LogInformation("No changes");
+            }
         }
     }
 }
