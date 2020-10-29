@@ -57,16 +57,15 @@ namespace GitMonitor
             try
             {
                 string configPath = ApplicationConfiguration.ConfigPath ?? string.Empty;
-                string configFilePath = Path.GetFullPath(Path.Combine(configPath, "config.yml"));
 
-                Console.WriteLine($"Using configuration file '{configFilePath}'");
+                Console.WriteLine($"Using configuration file '{configPath}'");
 
-                if (!File.Exists(configFilePath))
+                if (!File.Exists(configPath))
                 {
                     throw new YamlConfigurationValidationException("Configuration file doesn't exists");
                 }
 
-                var file = File.OpenText(configFilePath);
+                var file = File.OpenText(configPath);
 
                 var yamlConfiguration = Deserializer.Deserialize<YamlConfiguration?>(file);
 
