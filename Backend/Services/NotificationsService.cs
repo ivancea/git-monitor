@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GitMonitor.Hubs;
 using GitMonitor.Objects;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace GitMonitor.Services
 {
@@ -76,12 +75,12 @@ namespace GitMonitor.Services
 
             if (changes.Count > 0)
             {
-                var serializedChanges = JsonConvert.SerializeObject(changes, new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                var serializedChanges = JsonSerializer.Serialize(changes, new JsonSerializerOptions() {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true,
                 });
                 await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
-                Logger.LogInformation($"Changes: {JsonConvert.SerializeObject(changes, Formatting.Indented)}");
+                Logger.LogInformation($"Changes: {serializedChanges}");
             }
             else
             {
