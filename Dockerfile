@@ -1,8 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine as build
 WORKDIR /app
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && apt-get install -y nodejs
+RUN apk update && apk add nodejs nodejs-npm
 
 COPY *.csproj ./
 RUN dotnet restore
@@ -15,7 +14,7 @@ RUN cd Frontend \
 COPY . .
 RUN dotnet publish -c Release -o build
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine
 WORKDIR /app
 
 COPY --from=build /app/build .

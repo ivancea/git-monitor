@@ -1,39 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { config } from "../Config";
-import * as signalR from "@microsoft/signalr";
 import { Alert, Button } from "reactstrap";
 import { cloneDeep, isNil } from "lodash";
-import { ChangeObjectType, Changes, ChangeType, ChangeWrapper, CommitChange } from "../types/changes";
+import { Changes, ChangeWrapper } from "../types/changes";
 import { ChangesList } from "./changes/ChangesList";
-import { as } from "../utils";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export function Home(): React.ReactElement {
     const [error, setError] = useState<string>();
-    const [changes, setChanges] = useState<ChangeWrapper[]>([
-        {
-            repository: "Test repository",
-            seen: false,
-            date: new Date(),
-            change: as<CommitChange>({
-                objectType: ChangeObjectType.Commit,
-                type: ChangeType.Created,
-                objectName: "Message",
-                user: {
-                    name: "Iván Cea Fontenla",
-                    email: "ivancea96@outlook.com",
-                },
-                hash: "CommitSHA",
-                message: "Message\nLong message",
-            }),
-        },
-    ]);
+    const [changes, setChanges] = useState<ChangeWrapper[]>([]);
 
     useEffect(() => {
         Notification.requestPermission();
 
         setError("Connecting...");
 
-        const newHub = new signalR.HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
+        const newHub = new HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
 
         newHub.on("changes", (newChangesJson: string) => {
             const newChanges: Changes = JSON.parse(newChangesJson);
