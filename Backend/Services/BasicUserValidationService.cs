@@ -13,7 +13,6 @@ namespace GitMonitor.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicUserValidationService"/> class.
         /// </summary>
-        /// <param name="logger">The service logger.</param>
         /// <param name="applicationOptions">The application configuration to check the username and password.</param>
         public BasicUserValidationService(IOptions<ApplicationOptions> applicationOptions)
         {
