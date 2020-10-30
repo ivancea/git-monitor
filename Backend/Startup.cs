@@ -1,11 +1,18 @@
 using System.Text.Json.Serialization;
+using AspNetCore.Authentication.Basic;
+using GitMonitor.Configurations;
 using GitMonitor.Hubs;
+using GitMonitor.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace GitMonitor
 {
@@ -32,9 +39,9 @@ namespace GitMonitor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
-                .AddJsonOptions(opts =>
+                .AddJsonOptions(options =>
                 {
-                    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
             // In production, the React files will be served from this directory
@@ -56,6 +63,9 @@ namespace GitMonitor
                 });
             });
 
+            services.AddAuthentication(BasicDefaults.AuthenticationScheme)
+                .AddBasic<BasicUserValidationService>(options => options.Realm = "GitMonitor");
+
             services.AddSwaggerGen();
 
             services.AddDependencies(Configuration);
@@ -66,7 +76,8 @@ namespace GitMonitor
         /// </summary>
         /// <param name="app">The application request pipeline builder.</param>
         /// <param name="env">The application environment information.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        /// <param name="applicationOptions">The application configuration to set the authentication middleware.</param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<ApplicationOptions> applicationOptions)
         {
             if (env.IsDevelopment())
             {
@@ -93,6 +104,18 @@ namespace GitMonitor
             app.UseCors("DevelopmentFrontend");
 
             app.UseRouting();
+
+            if (applicationOptions.Value.Username == null)
+            {
+                app.Use((context, next) =>
+                {
+                    context.Request.Headers["Authorization"] = "Basic YW5vbnltb3VzOmFub255bW91cw==";
+                    return next();
+                });
+            }
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

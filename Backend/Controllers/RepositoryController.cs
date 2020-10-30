@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GitMonitor.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +13,7 @@ namespace GitMonitor.Controllers
     /// </summary>
     [ApiController]
     [Route(ApiConstants.ApiPath + "repository")]
+    [Authorize]
     public class RepositoryController : ControllerBase
     {
         /// <summary>
@@ -29,6 +31,12 @@ namespace GitMonitor.Controllers
 
         private GitService GitService { get; }
 
+        /// <summary>
+        /// Gets the diff of the commit in the repository.
+        /// </summary>
+        /// <param name="repositoryName">The name of the repository containing the commit.</param>
+        /// <param name="commitHash">The hash of the commit.</param>
+        /// <returns>The raw diff string, provided by git.</returns>
         [HttpGet("diff")]
         public ActionResult<string> GetDiff(string repositoryName, string commitHash)
         {

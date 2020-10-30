@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using GitMonitor.Configurations;
 using GitMonitor.Objects;
 using GitMonitor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace GitMonitor
 {
@@ -15,25 +17,41 @@ namespace GitMonitor
         /// <summary>
         /// Initializes a new instance of the <see cref="StartupConfiguration"/> class.
         /// </summary>
+        /// <param name="applicationOptions">The application configuration to validate.</param>
         /// <param name="yamlConfigurationService">The configuration service to read user configuration.</param>
         /// <param name="gitService">The git service to configure and check repositories.</param>
         /// <param name="notificationsService">The notifications service to configure with the repositories.</param>
-        public StartupConfiguration(YamlConfigurationService yamlConfigurationService, GitService gitService, NotificationsService notificationsService)
+        public StartupConfiguration(IOptions<ApplicationOptions> applicationOptions, YamlConfigurationService yamlConfigurationService, GitService gitService, NotificationsService notificationsService)
         {
+            ApplicationOptions = applicationOptions.Value;
             YamlConfigurationService = yamlConfigurationService;
             GitService = gitService;
             NotificationsService = notificationsService;
         }
 
-        private YamlConfigurationService YamlConfigurationService { get; set; }
+        private ApplicationOptions ApplicationOptions { get; }
 
-        private GitService GitService { get; set; }
+        private YamlConfigurationService YamlConfigurationService { get; }
 
-        private NotificationsService NotificationsService { get; set; }
+        private GitService GitService { get; }
+
+        private NotificationsService NotificationsService { get; }
 
         /// <inheritdoc/>
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
+            if (ApplicationOptions.Username != null || ApplicationOptions.Password != null)
+            {
+                if (ApplicationOptions.Username == null)
+                {
+                    throw new ApplicationException("Error in configuration: Password set without Username");
+                }
+                else if (ApplicationOptions.Password == null)
+                {
+                    throw new ApplicationException("Error in configuration: Username set without Password");
+                }
+            }
+
             try
             {
                 YamlConfigurationService.LoadConfiguration();
