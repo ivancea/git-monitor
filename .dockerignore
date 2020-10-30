@@ -1,6 +1,7 @@
 clones
 data
 
+.github
 .git
 .gitignore
 .vscode
@@ -14,3 +15,5 @@ Frontend/node_modules/
 LICENSE
 README.md
 docker-compose.yml
+Dockerfile
+.dockerignore
