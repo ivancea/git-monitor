@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GitMonitor.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +13,7 @@ namespace GitMonitor.Controllers
     /// </summary>
     [ApiController]
     [Route(ApiConstants.ApiPath + "repository")]
+    [Authorize]
     public class RepositoryController : ControllerBase
     {
         /// <summary>

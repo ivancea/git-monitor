@@ -38,13 +38,7 @@ namespace GitMonitor
         /// <param name="services">The service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddControllersWithViews(options =>
-                {
-                    options.Filters.Add(
-                        new AuthorizeFilter(
-                            new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
-                })
+            services.AddControllersWithViews()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
