@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Modal, ModalBody, ModalHeader, Spinner } from "reactstrap";
+import { ListGroup, Modal, ModalBody, ModalHeader, Spinner } from "reactstrap";
 import { config } from "../../Config";
 import { ChangeWrapper, CommitChange } from "../../types/changes";
-import { parseDiff, Diff } from "react-diff-view";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { parseDiff } from "react-diff-view";
 import "react-diff-view/style/index.css";
 import { File } from "gitdiff-parser";
+import { FileDiff } from "./FileDiff";
 
 type Props = {
     change: ChangeWrapper<CommitChange>;
@@ -38,17 +41,17 @@ export function CommitDiffModal({ change, onClose }: Props): React.ReactElement 
     }, [setDiff, onClose, change.repository, change.change.hash]);
 
     return (
-        <Modal isOpen={true} toggle={toggle} size="lg">
+        <Modal isOpen={true} toggle={toggle} size="xl">
             <ModalHeader toggle={toggle}>
-                Diff of commit: {change.change.objectName} ({change.change.hash})
+                Diff of commit: <strong>{change.change.objectName}</strong> ({change.change.hash})
             </ModalHeader>
             <ModalBody className="commit-diff-body">
                 {diff ? (
-                    <div>
-                        {diff.map(({ hunks }: File, index: number) => (
-                            <Diff key={index} hunks={hunks} viewType="unified" />
+                    <ListGroup>
+                        {diff.map((file: File, index: number) => (
+                            <FileDiff key={index} file={file} />
                         ))}
-                    </div>
+                    </ListGroup>
                 ) : (
                     <Spinner />
                 )}
