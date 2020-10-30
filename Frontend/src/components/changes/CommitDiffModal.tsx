@@ -26,6 +26,7 @@ export function CommitDiffModal({ change, onClose }: Props): React.ReactElement 
         fetch(
             config.url.API +
                 `api/v1/repository/diff?repositoryName=${change.repository}&commitHash=${change.change.hash}`,
+            { credentials: "include" },
         )
             .then((r) => r.text())
             .then((d) => cancelled || setDiff(parseDiff(d)))
