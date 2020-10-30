@@ -121,6 +121,7 @@ namespace GitMonitor
             }
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
