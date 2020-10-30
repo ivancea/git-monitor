@@ -88,6 +88,12 @@ namespace GitMonitor.Services
             return changes;
         }
 
+        /// <summary>
+        /// Gets the diff of the commit in the repository.
+        /// </summary>
+        /// <param name="repositoryDescriptor">The descriptor of the repository containing the commit.</param>
+        /// <param name="commitHash">The hash of the commit.</param>
+        /// <returns>The raw diff string, provided by git, or null if the commit didn't exist.</returns>
         public string? GetDiff(RepositoryDescriptor repositoryDescriptor, string commitHash)
         {
             string path = Path.Combine(ApplicationOptions.RepositoryClonesPath ?? string.Empty, repositoryDescriptor.Name);

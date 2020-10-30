@@ -29,6 +29,12 @@ namespace GitMonitor.Controllers
 
         private GitService GitService { get; }
 
+        /// <summary>
+        /// Gets the diff of the commit in the repository.
+        /// </summary>
+        /// <param name="repositoryName">The name of the repository containing the commit.</param>
+        /// <param name="commitHash">The hash of the commit.</param>
+        /// <returns>The raw diff string, provided by git.</returns>
         [HttpGet("diff")]
         public ActionResult<string> GetDiff(string repositoryName, string commitHash)
         {

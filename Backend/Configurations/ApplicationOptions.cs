@@ -25,5 +25,17 @@ namespace GitMonitor.Configurations
         /// <value>The path of the repository clones.</value>
         [Required]
         public string? RepositoryClonesPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authentication username.
+        /// </summary>
+        /// <value>The authentication username.</value>
+        public string? Username { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authentication password.
+        /// </summary>
+        /// <value>The authentication password.</value>
+        public string? Password { get; set; }
     }
 }

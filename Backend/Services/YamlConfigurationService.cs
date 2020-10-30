@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GitMonitor.Configurations;
 using GitMonitor.Exceptions;
 using GitMonitor.Objects;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -20,9 +21,11 @@ namespace GitMonitor
         /// <summary>
         /// Initializes a new instance of the <see cref="YamlConfigurationService"/> class.
         /// </summary>
+        /// <param name="logger">The service logger.</param>
         /// <param name="applicationConfiguration">The application configuration.</param>
-        public YamlConfigurationService(IOptions<ApplicationOptions> applicationConfiguration)
+        public YamlConfigurationService(ILogger<YamlConfigurationService> logger, IOptions<ApplicationOptions> applicationConfiguration)
         {
+            Logger = logger;
             ApplicationConfiguration = applicationConfiguration.Value;
 
             Deserializer = new DeserializerBuilder()
@@ -42,6 +45,8 @@ namespace GitMonitor
         /// <value>The configured repositories.</value>
         public List<RepositoryDescriptor>? Repositories { get; set; }
 
+        private ILogger Logger { get; }
+
         private ApplicationOptions ApplicationConfiguration { get; }
 
         private IDeserializer Deserializer { get; }
@@ -55,7 +60,7 @@ namespace GitMonitor
             {
                 string configPath = ApplicationConfiguration.ConfigPath ?? string.Empty;
 
-                Console.WriteLine($"Using configuration file '{configPath}'");
+                Logger.LogInformation($"Using configuration file '{configPath}'");
 
                 if (!File.Exists(configPath))
                 {
