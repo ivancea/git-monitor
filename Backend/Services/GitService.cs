@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GitMonitor.Configurations;
 using GitMonitor.Objects;
 using GitMonitor.Objects.Changes;
@@ -85,6 +86,26 @@ namespace GitMonitor.Services
             }
 
             return changes;
+        }
+
+        public string? GetDiff(RepositoryDescriptor repositoryDescriptor, string commitHash)
+        {
+            string path = Path.Combine(ApplicationOptions.RepositoryClonesPath ?? string.Empty, repositoryDescriptor.Name);
+
+            var repository = new Repository(path);
+
+            var commit = repository.Lookup<Commit>(commitHash);
+
+            var parent = commit?.Parents.FirstOrDefault();
+
+            if (commit == null || parent == null)
+            {
+                return null;
+            }
+
+            var patch = repository.Diff.Compare<Patch>(parent.Tree, commit.Tree);
+
+            return patch.Content;
         }
 
         private void Update(Repository repository, RepositoryDescriptor repositoryDescriptor)

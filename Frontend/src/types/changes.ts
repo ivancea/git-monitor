@@ -1,7 +1,7 @@
-export type ChangeWrapper = {
+export type ChangeWrapper<T extends Change = Change> = {
     repository: string;
     date: Date;
-    change: Change;
+    change: T;
     seen: boolean;
 };
 
