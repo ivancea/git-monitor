@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { config } from "../Config";
 import { Alert, Button } from "reactstrap";
 import { cloneDeep } from "lodash";
-import { Changes, ChangeWrapper } from "../types/changes";
+import { Changes, ChangesNotification, ChangeWrapper } from "../types/changes";
 import { ChangesList } from "./changes/ChangesList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -18,8 +18,8 @@ export function Home(): React.ReactElement {
         const newHub = new HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
 
         newHub.on("changes", (newChangesJson: string) => {
-            const newChanges: Changes = JSON.parse(newChangesJson);
-            const wrappedChanges = Object.entries(newChanges).flatMap((e) =>
+            const newChanges: ChangesNotification = JSON.parse(newChangesJson);
+            const wrappedChanges = Object.entries(newChanges.changes).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
                     repository: e[0],
                     date: new Date(),
@@ -33,7 +33,7 @@ export function Home(): React.ReactElement {
                     " new change" +
                     (wrappedChanges.length > 1 ? "s" : "") +
                     " in " +
-                    Object.keys(newChanges).sort().join(", "),
+                    Object.keys(newChanges.changes).sort().join(", "),
             );
 
             setChanges((c) => [...c, ...wrappedChanges]);

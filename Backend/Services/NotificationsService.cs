@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitMonitor.Hubs;
 using GitMonitor.Objects;
+using GitMonitor.Objects.Changes;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -61,32 +62,37 @@ namespace GitMonitor.Services
 
         private async Task RefreshRepositoriesAsync(IEnumerable<RepositoryDescriptor> repositories)
         {
-            Logger.LogInformation($"Refreshing repositories");
+            Logger.LogDebug($"Refreshing repositories");
 
-            var changes = repositories
-                .Select(r => new
-                {
-                    descriptor = r,
-                    changes = GitService.FetchChanges(r),
-                })
-                .Where(r => r.changes.Count > 0)
-                .ToDictionary(
-                    r => r.descriptor.Name,
-                    r => r.changes);
+            var changes = new Dictionary<string, List<Change>>();
+            var errors = new Dictionary<string, string>();
 
-            if (changes.Count > 0)
+            foreach (var repository in repositories)
             {
-                var serializedChanges = JsonConvert.SerializeObject(changes, Formatting.Indented, new JsonSerializerSettings
+                try
+                {
+                    changes[repository.Name] = GitService.FetchChanges(repository);
+                }
+                catch (Exception exc)
+                {
+                    errors[repository.Name] = exc.Message;
+                }
+            }
+
+            if (changes.Count > 0 || errors.Count > 0)
+            {
+                var notification = new ChangesNotification(changes, errors);
+                var serializedChanges = JsonConvert.SerializeObject(notification, Formatting.Indented, new JsonSerializerSettings
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 });
 
                 await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
-                Logger.LogInformation($"Changes: {serializedChanges}");
+                Logger.LogDebug($"Changes: {serializedChanges}");
             }
             else
             {
-                Logger.LogInformation("No changes");
+                Logger.LogDebug("No changes");
             }
         }
     }
