@@ -71,7 +71,12 @@ namespace GitMonitor.Services
             {
                 try
                 {
-                    changes[repository.Name] = GitService.FetchChanges(repository);
+                    var repositoryChanges = GitService.FetchChanges(repository);
+
+                    if (repositoryChanges.Count > 0)
+                    {
+                        changes[repository.Name] = repositoryChanges;
+                    }
                 }
                 catch (Exception exc)
                 {
@@ -79,21 +84,14 @@ namespace GitMonitor.Services
                 }
             }
 
-            if (changes.Count > 0 || errors.Count > 0)
+            var notification = new ChangesNotification(changes, errors);
+            var serializedChanges = JsonConvert.SerializeObject(notification, Formatting.Indented, new JsonSerializerSettings
             {
-                var notification = new ChangesNotification(changes, errors);
-                var serializedChanges = JsonConvert.SerializeObject(notification, Formatting.Indented, new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                });
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            });
 
-                await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
-                Logger.LogDebug($"Changes: {serializedChanges}");
-            }
-            else
-            {
-                Logger.LogDebug("No changes");
-            }
+            await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
+            Logger.LogDebug($"Changes: {serializedChanges}");
         }
     }
 }
