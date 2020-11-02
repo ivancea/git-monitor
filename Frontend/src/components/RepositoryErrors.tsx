@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Collapse } from "reactstrap";
+import { Alert, Badge, Collapse } from "reactstrap";
 import { ChangesNotification } from "../types/changes";
 
 type Props = {
@@ -16,17 +16,19 @@ export function RepositoryErrors({ errors }: Props): React.ReactElement {
     }
 
     return (
-        <div>
+        <Alert isOpen={true} color="warning">
             <div className="errors-header" onClick={toggle}>
-                Repository errors
+                <h4>Repository errors</h4>
             </div>
             <Collapse isOpen={!collapsed}>
                 {Object.keys(errors).map((repository) => (
                     <Alert key={repository} color="danger" isOpen={true}>
-                        {errors[repository]}
+                        <h5>
+                            <Badge color="info">{repository}</Badge> {errors[repository]}
+                        </h5>
                     </Alert>
                 ))}
             </Collapse>
-        </div>
+        </Alert>
     );
 }
