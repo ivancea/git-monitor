@@ -5,6 +5,11 @@ export type ChangeWrapper<T extends Change = Change> = {
     seen: boolean;
 };
 
+export type ChangesNotification = {
+    changes: Changes;
+    errors: Record<string, string>;
+};
+
 export type Changes = Record<string, Change[]>;
 
 export type Change = {

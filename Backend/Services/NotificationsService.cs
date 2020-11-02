@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GitMonitor.Hubs;
 using GitMonitor.Objects;
+using GitMonitor.Objects.Changes;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -61,33 +62,36 @@ namespace GitMonitor.Services
 
         private async Task RefreshRepositoriesAsync(IEnumerable<RepositoryDescriptor> repositories)
         {
-            Logger.LogInformation($"Refreshing repositories");
+            Logger.LogDebug($"Refreshing repositories");
 
-            var changes = repositories
-                .Select(r => new
-                {
-                    descriptor = r,
-                    changes = GitService.FetchChanges(r),
-                })
-                .Where(r => r.changes.Count > 0)
-                .ToDictionary(
-                    r => r.descriptor.Name,
-                    r => r.changes);
+            var changes = new Dictionary<string, List<Change>>();
+            var errors = new Dictionary<string, string>();
 
-            if (changes.Count > 0)
+            foreach (var repository in repositories)
             {
-                var serializedChanges = JsonConvert.SerializeObject(changes, Formatting.Indented, new JsonSerializerSettings
+                try
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                });
+                    var repositoryChanges = GitService.FetchChanges(repository);
 
-                await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
-                Logger.LogInformation($"Changes: {serializedChanges}");
+                    if (repositoryChanges.Count > 0)
+                    {
+                        changes[repository.Name] = repositoryChanges;
+                    }
+                }
+                catch (Exception exc)
+                {
+                    errors[repository.Name] = exc.Message;
+                }
             }
-            else
+
+            var notification = new ChangesNotification(changes, errors);
+            var serializedChanges = JsonConvert.SerializeObject(notification, Formatting.Indented, new JsonSerializerSettings
             {
-                Logger.LogInformation("No changes");
-            }
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            });
+
+            await RepositoryChangesHub.Clients.All.SendAsync("changes", serializedChanges);
+            Logger.LogDebug($"Changes: {serializedChanges}");
         }
     }
 }

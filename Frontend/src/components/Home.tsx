@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { config } from "../Config";
 import { Alert, Button } from "reactstrap";
 import { cloneDeep } from "lodash";
-import { Changes, ChangeWrapper } from "../types/changes";
+import { ChangesNotification, ChangeWrapper } from "../types/changes";
 import { ChangesList } from "./changes/ChangesList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import "./styles/global.scss";
+import { RepositoryErrors } from "./RepositoryErrors";
 
 export function Home(): React.ReactElement {
     const [error, setError] = useState<string>();
     const [changes, setChanges] = useState<ChangeWrapper[]>([]);
+    const [errors, setErrors] = useState<ChangesNotification["errors"]>({});
 
     useEffect(() => {
         Notification.requestPermission();
@@ -18,8 +21,8 @@ export function Home(): React.ReactElement {
         const newHub = new HubConnectionBuilder().withUrl(config.url.API + "hubs/changes").build();
 
         newHub.on("changes", (newChangesJson: string) => {
-            const newChanges: Changes = JSON.parse(newChangesJson);
-            const wrappedChanges = Object.entries(newChanges).flatMap((e) =>
+            const newChanges: ChangesNotification = JSON.parse(newChangesJson);
+            const wrappedChanges = Object.entries(newChanges.changes).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
                     repository: e[0],
                     date: new Date(),
@@ -28,15 +31,19 @@ export function Home(): React.ReactElement {
                 })),
             );
 
-            new Notification(
-                wrappedChanges.length +
-                    " new change" +
-                    (wrappedChanges.length > 1 ? "s" : "") +
-                    " in " +
-                    Object.keys(newChanges).sort().join(", "),
-            );
+            if (wrappedChanges.length > 0) {
+                new Notification(
+                    wrappedChanges.length +
+                        " new change" +
+                        (wrappedChanges.length > 1 ? "s" : "") +
+                        " in " +
+                        Object.keys(newChanges.changes).sort().join(", "),
+                );
 
-            setChanges((c) => [...c, ...wrappedChanges]);
+                setChanges((c) => [...c, ...wrappedChanges]);
+            }
+
+            setErrors(newChanges.errors);
         });
 
         newHub.onreconnecting((e) => setError("Reconnecting to the server..." + (e ? ` (${e.message})` : undefined)));
@@ -71,6 +78,8 @@ export function Home(): React.ReactElement {
             <Alert color="danger" isOpen={!!error} toggle={toggleError}>
                 {error}
             </Alert>
+            <RepositoryErrors errors={errors} />
+
             {changes.length == 0 ? (
                 "No changes yet"
             ) : (
