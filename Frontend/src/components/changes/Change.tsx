@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Badge, Collapse, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from "reactstrap";
+import { Badge, Col, Collapse, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Row } from "reactstrap";
 import { ChangeObjectType, ChangeType, ChangeWrapper } from "../../types/changes";
 import { ChangeDetails } from "./ChangeDetails";
 
 type Props = {
     change: ChangeWrapper;
+    hidden?: boolean;
 };
 
-export function Change({ change }: Props): React.ReactElement {
+export function Change({ change, hidden }: Props): React.ReactElement {
     const [collapsed, setCollapsed] = useState(false);
 
     useEffect(() => {
@@ -17,26 +18,39 @@ export function Change({ change }: Props): React.ReactElement {
     const toggleCollapsed = React.useCallback(() => setCollapsed((c) => !c), [setCollapsed]);
 
     return (
-        <ListGroupItem className="change" color={change.seen ? undefined : "success"}>
-            <ListGroupItemHeading className="change-header" onClick={toggleCollapsed}>
-                <Badge color="info">{change.repository}</Badge>{" "}
-                {renderChangeType(change.change.type, change.change.objectType)} {change.change.objectName}{" "}
-                <sup>
-                    <Badge color="info" pill>
-                        {change.date.toLocaleTimeString()}
-                    </Badge>
-                </sup>
-                <br />
-                {change.change.user ? (
-                    <small>By: {change.change.user.name + " <" + change.change.user.email + ">"}</small>
-                ) : undefined}
-            </ListGroupItemHeading>
-            <Collapse isOpen={!collapsed}>
-                <ListGroupItemText>
-                    <ChangeDetails change={change} />
-                </ListGroupItemText>
-            </Collapse>
-        </ListGroupItem>
+        <Collapse isOpen={!hidden}>
+            <ListGroupItem
+                className={"change" + (hidden ? " hidden-change" : "")}
+                color={change.seen ? undefined : "success"}
+            >
+                <ListGroupItemHeading className="change-header" onClick={toggleCollapsed}>
+                    <Row>
+                        <Col xs={10}>
+                            {renderChangeType(change.change.type, change.change.objectType)} {change.change.objectName}
+                            <br />
+                            {change.change.user ? (
+                                <small>By: {change.change.user.name + " <" + change.change.user.email + ">"}</small>
+                            ) : undefined}
+                        </Col>
+                        <Col xs={2}>
+                            <div>
+                                <Badge color="info">{change.repository}</Badge>
+                            </div>
+                            <div>
+                                <Badge color="secondary" pill>
+                                    {change.date}
+                                </Badge>
+                            </div>
+                        </Col>
+                    </Row>
+                </ListGroupItemHeading>
+                <Collapse isOpen={!collapsed}>
+                    <ListGroupItemText>
+                        <ChangeDetails change={change} />
+                    </ListGroupItemText>
+                </Collapse>
+            </ListGroupItem>
+        </Collapse>
     );
 }
 

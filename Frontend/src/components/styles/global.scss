@@ -1,9 +1,16 @@
-.change .list-group-item-text {
-    margin: 0;
+.badge {
+    transition: none;
 }
 
-.change-header {
+.file-diff-header,
+.change-header,
+.errors-header,
+.option-button {
     cursor: pointer;
+}
+
+.change .list-group-item-text {
+    margin: 0;
 }
 
 .change-details > li > pre {
@@ -14,10 +21,10 @@
     vertical-align: top;
 }
 
-.file-diff-header {
-    cursor: pointer;
+.filter-name {
+    text-align: right;
 }
 
-.errors-header {
-    cursor: pointer;
+.filter-option-button {
+    margin: 0 2px;
 }

@@ -7,10 +7,12 @@ import { ChangesList } from "./changes/ChangesList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import "./styles/global.scss";
 import { RepositoryErrors } from "./RepositoryErrors";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import * as uuid from "uuid";
 
 export function Home(): React.ReactElement {
     const [error, setError] = useState<string>();
-    const [changes, setChanges] = useState<ChangeWrapper[]>([]);
+    const [changes, setChanges] = useLocalStorage<ChangeWrapper[]>("changes", []);
     const [errors, setErrors] = useState<ChangesNotification["errors"]>({});
 
     useEffect(() => {
@@ -24,8 +26,9 @@ export function Home(): React.ReactElement {
             const newChanges: ChangesNotification = JSON.parse(newChangesJson);
             const wrappedChanges = Object.entries(newChanges.changes).flatMap((e) =>
                 e[1].map<ChangeWrapper>((c) => ({
+                    id: uuid.v4(),
                     repository: e[0],
-                    date: new Date(),
+                    date: new Date().toLocaleTimeString(),
                     change: c,
                     seen: false,
                 })),
@@ -65,7 +68,7 @@ export function Home(): React.ReactElement {
                     setTimeout(connect, 5000);
                 });
         }
-    }, []);
+    }, [setChanges]);
 
     const toggleError = React.useCallback(() => setError(undefined), [setError]);
 
