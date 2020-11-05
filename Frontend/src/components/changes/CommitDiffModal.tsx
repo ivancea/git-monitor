@@ -29,7 +29,7 @@ export function CommitDiffModal({ change, onClose }: Props): React.ReactElement 
             { credentials: "include" },
         )
             .then((r) => r.text())
-            .then((d) => cancelled || setDiff(parseDiff(d)))
+            .then((d) => cancelled || setDiff(parseDiff(d)?.filter((f: File) => f.oldPath !== "" || f.newPath !== "")))
             .catch((e) => {
                 console.warn(e);
                 cancelled || onClose();
@@ -48,11 +48,15 @@ export function CommitDiffModal({ change, onClose }: Props): React.ReactElement 
             </ModalHeader>
             <ModalBody className="commit-diff-body">
                 {diff ? (
-                    <ListGroup>
-                        {diff.map((file: File, index: number) => (
-                            <FileDiff key={index} file={file} />
-                        ))}
-                    </ListGroup>
+                    diff.length > 0 ? (
+                        <ListGroup>
+                            {diff.map((file: File, index: number) => (
+                                <FileDiff key={index} file={file} />
+                            ))}
+                        </ListGroup>
+                    ) : (
+                        <h5>No changes</h5>
+                    )
                 ) : (
                     <Spinner />
                 )}
