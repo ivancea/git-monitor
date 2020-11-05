@@ -1,6 +1,7 @@
 export type ChangeWrapper<T extends Change = Change> = {
+    id: string;
     repository: string;
-    date: Date;
+    date: string;
     change: T;
     seen: boolean;
 };
