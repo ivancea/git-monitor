@@ -18,8 +18,6 @@ export function CommitDiffModal({ change, onClose }: Props): React.ReactElement 
     const [diff, setDiff] = useState<File[]>();
     const toggle = React.useCallback(() => onClose(), [onClose]);
 
-    console.log(diff);
-
     useEffect(() => {
         let cancelled = false;
 

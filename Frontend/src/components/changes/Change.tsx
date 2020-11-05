@@ -45,7 +45,7 @@ export function Change({ change, hidden }: Props): React.ReactElement {
                     </Row>
                 </ListGroupItemHeading>
                 <Collapse isOpen={!collapsed}>
-                    <ListGroupItemText className="mb-0">
+                    <ListGroupItemText tag="div" className="mb-0">
                         <ChangeDetails change={change} />
                     </ListGroupItemText>
                 </Collapse>

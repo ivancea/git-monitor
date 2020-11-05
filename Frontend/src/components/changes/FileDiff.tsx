@@ -19,9 +19,9 @@ export function FileDiff({ file }: Props): React.ReactElement {
             <ListGroupItemHeading role="button" onClick={toggle}>
                 {renderChangeHeader(file)}
             </ListGroupItemHeading>
-            <ListGroupItemText>
+            <ListGroupItemText tag="div">
                 <Collapse isOpen={!collapsed}>
-                    <Diff hunks={file.hunks} viewType="unified" />
+                    <Diff hunks={file.hunks} diffType={file.type} viewType="unified" />
                 </Collapse>
             </ListGroupItemText>
         </ListGroupItem>
