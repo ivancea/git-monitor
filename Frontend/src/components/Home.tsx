@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { config } from "../Config";
-import { Alert, Button } from "reactstrap";
+import { Alert, Button, ButtonGroup } from "reactstrap";
 import { cloneDeep } from "lodash";
 import { ChangesNotification, ChangeWrapper } from "../types/changes";
 import { ChangesList } from "./changes/ChangesList";
@@ -76,6 +76,10 @@ export function Home(): React.ReactElement {
         setChanges((oldChanges) => oldChanges.map((change) => ({ ...cloneDeep(change), seen: true })));
     }, [setChanges]);
 
+    const removeAllReadChanges = React.useCallback(() => {
+        setChanges((oldChanges) => oldChanges.filter((change) => !change.seen));
+    }, [setChanges]);
+
     return (
         <div>
             <Alert color="danger" isOpen={!!error} toggle={toggleError}>
@@ -87,9 +91,14 @@ export function Home(): React.ReactElement {
                 "No changes yet"
             ) : (
                 <>
-                    <Button color="success" onClick={markAllAsRead}>
-                        Mark all as read
-                    </Button>
+                    <ButtonGroup>
+                        <Button color="success" onClick={markAllAsRead}>
+                            Mark all as read
+                        </Button>
+                        <Button color="danger" onClick={removeAllReadChanges}>
+                            Remove all read changes
+                        </Button>
+                    </ButtonGroup>
                     <ChangesList changes={changes} />
                 </>
             )}

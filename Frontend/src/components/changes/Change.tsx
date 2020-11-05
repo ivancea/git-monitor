@@ -23,7 +23,7 @@ export function Change({ change, hidden }: Props): React.ReactElement {
                 className={"change" + (hidden ? " hidden-change" : "")}
                 color={change.seen ? undefined : "success"}
             >
-                <ListGroupItemHeading className="change-header" onClick={toggleCollapsed}>
+                <ListGroupItemHeading role="button" onClick={toggleCollapsed}>
                     <Row>
                         <Col xs={10}>
                             {renderChangeType(change.change.type, change.change.objectType)} {change.change.objectName}
@@ -32,7 +32,7 @@ export function Change({ change, hidden }: Props): React.ReactElement {
                                 <small>By: {change.change.user.name + " <" + change.change.user.email + ">"}</small>
                             ) : undefined}
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={2} className="text-center">
                             <div>
                                 <Badge color="info">{change.repository}</Badge>
                             </div>

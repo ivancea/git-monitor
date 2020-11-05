@@ -16,7 +16,7 @@ export function FileDiff({ file }: Props): React.ReactElement {
 
     return (
         <ListGroupItem>
-            <ListGroupItemHeading className="file-diff-header" onClick={toggle}>
+            <ListGroupItemHeading role="button" onClick={toggle}>
                 {renderChangeHeader(file)}
             </ListGroupItemHeading>
             <ListGroupItemText>

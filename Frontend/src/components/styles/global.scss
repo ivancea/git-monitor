@@ -2,13 +2,6 @@
     transition: none;
 }
 
-.file-diff-header,
-.change-header,
-.errors-header,
-.option-button {
-    cursor: pointer;
-}
-
 .change .list-group-item-text {
     margin: 0;
 }
@@ -19,12 +12,4 @@
     border-radius: 4px;
     padding: 3px;
     vertical-align: top;
-}
-
-.filter-name {
-    text-align: right;
-}
-
-.filter-option-button {
-    margin: 0 2px;
 }

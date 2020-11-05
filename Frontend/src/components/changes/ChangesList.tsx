@@ -67,20 +67,24 @@ export function ChangesList({ changes }: Props): React.ReactElement {
                 name="Users"
                 changes={changes}
                 accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
+                textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
                 onChanged={onUsersFilterChanged}
             />
             <ChangeFilterSelector
                 name="Types"
+                changes={changes}
                 defaultOptions={changeTypes}
                 accessor={useCallback((c) => c.change.type, [])}
                 onChanged={onTypesFilterChanged}
             />
             <ChangeFilterSelector
                 name="Object types"
+                changes={changes}
                 defaultOptions={changeObjectTypes}
                 accessor={useCallback((c) => c.change.objectType, [])}
                 onChanged={onObjectTypesFilterChanged}
             />
+            Total: {changes.length}, Visible: {changes.filter((c) => !isHidden(c)).length}
             <ListGroup>
                 {changes
                     .map((change) => <Change key={change.id} change={change} hidden={isHidden(change)} />)

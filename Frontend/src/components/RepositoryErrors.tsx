@@ -17,7 +17,7 @@ export function RepositoryErrors({ errors }: Props): React.ReactElement {
 
     return (
         <Alert isOpen={true} color="warning">
-            <div className="errors-header" onClick={toggle}>
+            <div role="button" tabIndex={0} onClick={toggle}>
                 <h4>Repository errors</h4>
             </div>
             <Collapse isOpen={!collapsed}>
