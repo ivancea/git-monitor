@@ -5,6 +5,7 @@ using GitMonitor.Objects;
 using GitMonitor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace GitMonitor
@@ -17,17 +18,21 @@ namespace GitMonitor
         /// <summary>
         /// Initializes a new instance of the <see cref="StartupConfiguration"/> class.
         /// </summary>
+        /// <param name="logger">The service logger.</param>
         /// <param name="applicationOptions">The application configuration to validate.</param>
         /// <param name="yamlConfigurationService">The configuration service to read user configuration.</param>
         /// <param name="gitService">The git service to configure and check repositories.</param>
         /// <param name="notificationsService">The notifications service to configure with the repositories.</param>
-        public StartupConfiguration(IOptions<ApplicationOptions> applicationOptions, YamlConfigurationService yamlConfigurationService, GitService gitService, NotificationsService notificationsService)
+        public StartupConfiguration(ILogger<StartupConfiguration> logger, IOptions<ApplicationOptions> applicationOptions, YamlConfigurationService yamlConfigurationService, GitService gitService, NotificationsService notificationsService)
         {
+            Logger = logger;
             ApplicationOptions = applicationOptions.Value;
             YamlConfigurationService = yamlConfigurationService;
             GitService = gitService;
             NotificationsService = notificationsService;
         }
+
+        private ILogger<StartupConfiguration> Logger { get; }
 
         private ApplicationOptions ApplicationOptions { get; }
 
@@ -60,6 +65,7 @@ namespace GitMonitor
 
                 foreach (var repository in repositories)
                 {
+                    Logger.LogInformation("Initializing repository '{repository}'", repository.Name);
                     GitService.InitializeRepository(repository);
                 }
 
