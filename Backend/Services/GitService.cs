@@ -42,7 +42,6 @@ namespace GitMonitor.Services
                 SetConfigs(repository, repositoryDescriptor);
 
                 repository.Network.Remotes.Update("origin", r => r.Url = repositoryDescriptor.Url.ToString());
-                Update(repository, repositoryDescriptor);
             }
             else
             {
