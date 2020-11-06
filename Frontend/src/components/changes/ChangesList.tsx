@@ -1,45 +1,31 @@
-import React, { useCallback, useState } from "react";
-import { ListGroup } from "reactstrap";
+import { cloneDeep } from "lodash";
+import React, { Dispatch, SetStateAction, useCallback } from "react";
+import { Button, ButtonGroup, ListGroup } from "reactstrap";
+import { Filter } from "../../hooks/useChanges";
 import { ChangeObjectType, ChangeType, ChangeWrapper } from "../../types/changes";
 import { Change } from "./Change";
 import { ChangeFilterSelector } from "./ChangeFilterSelector";
 
 type Props = {
     changes: ChangeWrapper[];
-};
-
-type Filter = {
-    repositories: Map<string, boolean>;
-    users: Map<string, boolean>;
-    types: Map<string, boolean>;
-    objectTypes: Map<string, boolean>;
+    setChanges: Dispatch<SetStateAction<ChangeWrapper[]>>;
+    setFilter: Dispatch<SetStateAction<Filter>>;
+    isHidden: (change: ChangeWrapper) => boolean;
+    notifyHiddenChanges: boolean;
+    setNotifyHiddenChanges: Dispatch<SetStateAction<boolean>>;
 };
 
 const changeTypes = Object.keys(ChangeType).filter((t) => typeof t === "string");
 const changeObjectTypes = Object.keys(ChangeObjectType).filter((t) => typeof t === "string");
 
-export function ChangesList({ changes }: Props): React.ReactElement {
-    const [filter, setFilter] = useState<Filter>({
-        repositories: new Map(),
-        users: new Map(),
-        types: new Map(),
-        objectTypes: new Map(),
-    });
-
-    const isHidden = (change: ChangeWrapper): boolean => {
-        if (!filter.repositories.get(change.repository)) {
-            return true;
-        } else if (!filter.users.get(change.change.user?.name ?? "")) {
-            return true;
-        } else if (!filter.types.get(change.change.type)) {
-            return true;
-        } else if (!filter.objectTypes.get(change.change.objectType)) {
-            return true;
-        }
-
-        return false;
-    };
-
+export function ChangesList({
+    changes,
+    setChanges,
+    setFilter,
+    isHidden,
+    notifyHiddenChanges,
+    setNotifyHiddenChanges,
+}: Props): React.ReactElement {
     const useFilterChanged = (filterType: keyof Filter): ((elements: Map<string | undefined, boolean>) => void) =>
         useCallback(
             (filter: Map<string | undefined, boolean>) =>
@@ -55,8 +41,36 @@ export function ChangesList({ changes }: Props): React.ReactElement {
     const onTypesFilterChanged = useFilterChanged("types");
     const onObjectTypesFilterChanged = useFilterChanged("objectTypes");
 
+    const markAllAsRead = React.useCallback(() => {
+        setChanges((oldChanges) => oldChanges.map((change) => ({ ...cloneDeep(change), seen: true })));
+    }, [setChanges]);
+
+    const removeAllReadChanges = React.useCallback(() => {
+        setChanges((oldChanges) => oldChanges.filter((change) => !change.seen));
+    }, [setChanges]);
+
+    const toggleNotifyHiddenChanges = React.useCallback(() => {
+        setNotifyHiddenChanges((oldNotifyHiddenChanges) => !oldNotifyHiddenChanges);
+    }, [setNotifyHiddenChanges]);
+
     return (
         <>
+            <ButtonGroup>
+                <Button color="success" onClick={markAllAsRead}>
+                    Mark all as read
+                </Button>
+                <Button color="danger" onClick={removeAllReadChanges}>
+                    Remove all read changes
+                </Button>
+            </ButtonGroup>
+            <Button
+                className="ml-1"
+                color={notifyHiddenChanges ? "success" : "secondary"}
+                outline={!notifyHiddenChanges}
+                onClick={toggleNotifyHiddenChanges}
+            >
+                {notifyHiddenChanges ? "✅" : "❌"} Notify hidden changes
+            </Button>
             <ChangeFilterSelector
                 name="Repositories"
                 changes={changes}
