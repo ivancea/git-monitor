@@ -103,7 +103,7 @@ namespace GitMonitor
 
             if (env.IsDevelopment())
             {
-            app.UseCors("DevelopmentFrontend");
+                app.UseCors("DevelopmentFrontend");
             }
 
             app.UseRouting();
