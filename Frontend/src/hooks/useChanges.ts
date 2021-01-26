@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { ChangesNotification, ChangeWrapper } from "../types/changes";
-import { useLocalStorage } from "./useLocalStorage";
-import { config } from "../Config";
 import * as uuid from "uuid";
+import { ChangeWrapper, ChangesNotification } from "../types/changes";
+import { config } from "../Config";
+import { useLocalStorage } from "./useLocalStorage";
 import { useSignalR } from "./useSignalR";
 
 export type Filter = {

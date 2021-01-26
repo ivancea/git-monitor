@@ -1,9 +1,9 @@
 import React from "react";
 import { Alert } from "reactstrap";
+import { useChanges } from "../hooks/useChanges";
 import { ChangesList } from "./changes/ChangesList";
 import "./styles/global.scss";
 import { RepositoryErrors } from "./RepositoryErrors";
-import { useChanges } from "../hooks/useChanges";
 
 export function Home(): React.ReactElement {
     const {

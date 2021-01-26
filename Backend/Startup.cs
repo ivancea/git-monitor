@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using System.Text.Json.Serialization;
 using AspNetCore.Authentication.Basic;
 using GitMonitor.Configurations;
@@ -112,7 +114,7 @@ namespace GitMonitor
             {
                 app.Use((context, next) =>
                 {
-                    context.Request.Headers["Authorization"] = "Basic YW5vbnltb3VzOmFub255bW91cw==";
+                    context.Request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes("anonymous:anonymous"));
                     return next();
                 });
             }

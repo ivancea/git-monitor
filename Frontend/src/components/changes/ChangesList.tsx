@@ -1,10 +1,10 @@
 import { cloneDeep } from "lodash";
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-import { Button, ButtonGroup, ListGroup } from "reactstrap";
+import { Button, ButtonGroup, Collapse, ListGroup } from "reactstrap";
 import { Filter } from "../../hooks/useChanges";
 import { ChangeObjectType, ChangeType, ChangeWrapper } from "../../types/changes";
-import { Change } from "./Change";
 import { ChangeFilterSelector } from "./ChangeFilterSelector";
+import { Change } from "./Change";
 
 type Props = {
     changes: ChangeWrapper[];
@@ -71,33 +71,33 @@ export function ChangesList({
             >
                 {notifyHiddenChanges ? "✅" : "❌"} Notify hidden changes
             </Button>
-            <ChangeFilterSelector
-                name="Repositories"
-                changes={changes}
-                accessor={useCallback((c) => c.repository, [])}
-                onChanged={onRepositoriesFilterChanged}
-            />
-            <ChangeFilterSelector
-                name="Users"
-                changes={changes}
-                accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
-                textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
-                onChanged={onUsersFilterChanged}
-            />
-            <ChangeFilterSelector
-                name="Types"
-                changes={changes}
-                defaultOptions={changeTypes}
-                accessor={useCallback((c) => c.change.type, [])}
-                onChanged={onTypesFilterChanged}
-            />
-            <ChangeFilterSelector
-                name="Object types"
-                changes={changes}
-                defaultOptions={changeObjectTypes}
-                accessor={useCallback((c) => c.change.objectType, [])}
-                onChanged={onObjectTypesFilterChanged}
-            />
+                <ChangeFilterSelector
+                    name="Repositories"
+                    changes={changes}
+                    accessor={useCallback((c) => c.repository, [])}
+                    onChanged={onRepositoriesFilterChanged}
+                />
+                <ChangeFilterSelector
+                    name="Users"
+                    changes={changes}
+                    accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
+                    textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
+                    onChanged={onUsersFilterChanged}
+                />
+                <ChangeFilterSelector
+                    name="Types"
+                    changes={changes}
+                    defaultOptions={changeTypes}
+                    accessor={useCallback((c) => c.change.type, [])}
+                    onChanged={onTypesFilterChanged}
+                />
+                <ChangeFilterSelector
+                    name="Object types"
+                    changes={changes}
+                    defaultOptions={changeObjectTypes}
+                    accessor={useCallback((c) => c.change.objectType, [])}
+                    onChanged={onObjectTypesFilterChanged}
+                />
             Total: {changes.length}, Visible: {changes.filter((c) => !isHidden(c)).length}
             <ListGroup>
                 {changes
