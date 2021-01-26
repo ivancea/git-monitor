@@ -1,9 +1,9 @@
 import { File } from "gitdiff-parser";
 import React, { useState } from "react";
-import { Badge, Collapse, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from "reactstrap";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Diff } from "react-diff-view";
+import { Badge, Collapse, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from "reactstrap";
 
 type Props = {
     file: File;

@@ -1,12 +1,12 @@
+import { File } from "gitdiff-parser";
 import React, { useEffect, useState } from "react";
-import { ListGroup, Modal, ModalBody, ModalHeader, Spinner } from "reactstrap";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { parseDiff } from "react-diff-view";
-import { File } from "gitdiff-parser";
+import "react-diff-view/style/index.css";
+import { ListGroup, Modal, ModalBody, ModalHeader, Spinner } from "reactstrap";
 import { config } from "../../Config";
 import { ChangeWrapper, CommitChange } from "../../types/changes";
-import "react-diff-view/style/index.css";
 import { FileDiff } from "./FileDiff";
 
 type Props = {
