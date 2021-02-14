@@ -1,48 +1,24 @@
 import { cloneDeep } from "lodash";
-import React, { Dispatch, SetStateAction, useCallback } from "react";
-import { useId } from "react-id-generator";
-import { Button, ButtonGroup, Col, Container, ListGroup, Row, UncontrolledCollapse } from "reactstrap";
-import { Filter } from "../../hooks/useChanges";
-import { ChangeObjectType, ChangeType, ChangeWrapper } from "../../types/changes";
+import React, { Dispatch, SetStateAction } from "react";
+import { Button, ButtonGroup, ListGroup } from "reactstrap";
+import { ChangeWrapper } from "../../types/changes";
 import { Change } from "./Change";
-import { ChangeFilterSelector } from "./ChangeFilterSelector";
 
 type Props = {
     changes: ChangeWrapper[];
     setChanges: Dispatch<SetStateAction<ChangeWrapper[]>>;
-    setFilter: Dispatch<SetStateAction<Filter>>;
     isHidden: (change: ChangeWrapper) => boolean;
     notifyHiddenChanges: boolean;
     setNotifyHiddenChanges: Dispatch<SetStateAction<boolean>>;
 };
 
-const changeTypes = Object.keys(ChangeType).filter((t) => typeof t === "string");
-const changeObjectTypes = Object.keys(ChangeObjectType).filter((t) => typeof t === "string");
-
 export function ChangesList({
     changes,
     setChanges,
-    setFilter,
     isHidden,
     notifyHiddenChanges,
     setNotifyHiddenChanges,
 }: Props): React.ReactElement {
-    const [filtersTogglerId] = useId();
-    const useFilterChanged = (filterType: keyof Filter): ((elements: Map<string | undefined, boolean>) => void) =>
-        useCallback(
-            (filter: Map<string | undefined, boolean>) =>
-                setFilter((f) => ({
-                    ...f,
-                    [filterType]: filter,
-                })),
-            [filterType],
-        );
-
-    const onRepositoriesFilterChanged = useFilterChanged("repositories");
-    const onUsersFilterChanged = useFilterChanged("users");
-    const onTypesFilterChanged = useFilterChanged("types");
-    const onObjectTypesFilterChanged = useFilterChanged("objectTypes");
-
     const markAllAsRead = React.useCallback(() => {
         setChanges((oldChanges) => oldChanges.map((change) => ({ ...cloneDeep(change), seen: true })));
     }, [setChanges]);
@@ -73,45 +49,9 @@ export function ChangesList({
             >
                 {notifyHiddenChanges ? "✅" : "❌"} Notify hidden changes
             </Button>
-            <Container>
-                <Row>
-                    <Col xs="1">
-                        <span id={filtersTogglerId}>Filters</span>
-                    </Col>
-                    <Col>
-                        <UncontrolledCollapse toggler={`#${filtersTogglerId}`}>
-                            <ChangeFilterSelector
-                                name="Repositories"
-                                changes={changes}
-                                accessor={useCallback((c) => c.repository, [])}
-                                onChanged={onRepositoriesFilterChanged}
-                            />
-                            <ChangeFilterSelector
-                                name="Users"
-                                changes={changes}
-                                accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
-                                textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
-                                onChanged={onUsersFilterChanged}
-                            />
-                            <ChangeFilterSelector
-                                name="Types"
-                                changes={changes}
-                                defaultOptions={changeTypes}
-                                accessor={useCallback((c) => c.change.type, [])}
-                                onChanged={onTypesFilterChanged}
-                            />
-                            <ChangeFilterSelector
-                                name="Object types"
-                                changes={changes}
-                                defaultOptions={changeObjectTypes}
-                                accessor={useCallback((c) => c.change.objectType, [])}
-                                onChanged={onObjectTypesFilterChanged}
-                            />
-                        </UncontrolledCollapse>
-                    </Col>
-                </Row>
-            </Container>
-            Total: {changes.length}, Visible: {changes.filter((c) => !isHidden(c)).length}
+            <div>
+                Total: {changes.length}, Visible: {changes.filter((c) => !isHidden(c)).length}
+            </div>
             <ListGroup>
                 {changes
                     .map((change) => <Change key={change.id} change={change} hidden={isHidden(change)} />)

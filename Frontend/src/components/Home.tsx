@@ -2,6 +2,7 @@ import React from "react";
 import { Alert } from "reactstrap";
 import { useChanges } from "../hooks/useChanges";
 import { ChangesList } from "./changes/ChangesList";
+import { ChangesFilters } from "./changes/filters/ChangesFilters";
 import { RepositoryErrors } from "./RepositoryErrors";
 import "./styles/global.scss";
 
@@ -12,6 +13,7 @@ export function Home(): React.ReactElement {
         changes,
         setChanges,
         errors,
+        filter,
         setFilter,
         isHidden,
         notifyHiddenChanges,
@@ -26,10 +28,10 @@ export function Home(): React.ReactElement {
                 {connectionError}
             </Alert>
             <RepositoryErrors errors={errors} />
+            <ChangesFilters changes={changes} filter={filter} setFilter={setFilter} />
             <ChangesList
                 changes={changes}
                 setChanges={setChanges}
-                setFilter={setFilter}
                 isHidden={isHidden}
                 notifyHiddenChanges={notifyHiddenChanges}
                 setNotifyHiddenChanges={setNotifyHiddenChanges}
