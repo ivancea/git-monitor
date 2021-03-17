@@ -45,7 +45,7 @@ namespace GitMonitor.Services
             }
             else
             {
-                CloneOptions cloneOptions = new CloneOptions
+                var cloneOptions = new CloneOptions
                 {
                     IsBare = true,
                     FetchOptions = MakeFetchOptions(repositoryDescriptor),
@@ -113,7 +113,7 @@ namespace GitMonitor.Services
             return patch.Content;
         }
 
-        private void Update(Repository repository, RepositoryDescriptor repositoryDescriptor)
+        private void Update(IRepository repository, RepositoryDescriptor repositoryDescriptor)
         {
             foreach (var tag in repository.Tags)
             {
@@ -152,7 +152,7 @@ namespace GitMonitor.Services
             return null;
         }
 
-        private void SetConfigs(Repository repository, RepositoryDescriptor repositoryDescriptor)
+        private void SetConfigs(IRepository repository, RepositoryDescriptor repositoryDescriptor)
         {
             foreach (var config in repositoryDescriptor.Config)
             {

@@ -17,11 +17,11 @@ namespace GitMonitor.Services.ChangesTrackers
         /// </summary>
         /// <param name="repository">The git repository.</param>
         /// <param name="changes">The list of changes to fill.</param>
-        public CommitsTracker(Repository repository, List<Change> changes)
+        public CommitsTracker(IRepository repository, List<Change> changes)
             : base(repository, changes)
         {
             OldCommits = repository.Commits
-                .QueryBy(new CommitFilter() { IncludeReachableFrom = Repository.Refs.Where(r => !r.IsLocalBranch) })
+                .QueryBy(new CommitFilter() { IncludeReachableFrom = Repository.Refs })
                 .ToDictionary(c => c.Sha);
         }
 
@@ -33,7 +33,7 @@ namespace GitMonitor.Services.ChangesTrackers
             GC.SuppressFinalize(this);
 
             var commits = Repository.Commits
-                .QueryBy(new CommitFilter() { IncludeReachableFrom = Repository.Refs.Where(r => !r.IsLocalBranch) })
+                .QueryBy(new CommitFilter() { IncludeReachableFrom = Repository.Refs })
                 .ToDictionary(c => c.Sha);
 
             foreach (var commit in commits.Values.Where(c => !OldCommits.ContainsKey(c.Sha)))

@@ -18,7 +18,7 @@ namespace GitMonitor.Services.ChangesTrackers
         /// </summary>
         /// <param name="repository">The git repository.</param>
         /// <param name="changes">The list of changes to fill.</param>
-        public TagsTracker(Repository repository, List<Change> changes)
+        public TagsTracker(IRepository repository, List<Change> changes)
             : base(repository, changes)
         {
             OldTags = repository.Tags
