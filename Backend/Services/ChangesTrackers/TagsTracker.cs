@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using GitMonitor.Objects.Changes;
 using LibGit2Sharp;
 

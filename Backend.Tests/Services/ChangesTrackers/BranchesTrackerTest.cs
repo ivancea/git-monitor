@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FluentAssertions;
 using GitMonitor.Objects.Changes;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,12 +48,15 @@ namespace GitMonitor.Services.ChangesTrackers
                 Branches.Add(MockBranch("new", "1"));
             }
 
-            Assert.AreEqual(1, Changes.Count);
-            Assert.AreEqual(ChangeObjectType.Branch, Changes[0].ObjectType);
-            Assert.AreEqual(ChangeType.Created, Changes[0].Type);
-            Assert.AreEqual("new", Changes[0].ObjectName);
-            Assert.IsInstanceOfType(Changes[0], typeof(BranchChange));
-            Assert.AreEqual("1", ((BranchChange)Changes[0]).TargetCommit);
+            Changes.Should().HaveCount(1)
+                .And.SatisfyRespectively(c =>
+                {
+                    c.ObjectType.Should().Be(ChangeObjectType.Branch);
+                    c.Type.Should().Be(ChangeType.Created);
+                    c.ObjectName.Should().Be("new");
+                    c.Should().BeOfType<BranchChange>()
+                        .Which.TargetCommit.Should().Be("1");
+                });
         }
 
         [TestMethod]
