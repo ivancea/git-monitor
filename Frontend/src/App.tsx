@@ -1,12 +1,14 @@
 import React from "react";
-import { Route } from "react-router";
+import { Route, Routes } from "react-router";
 import { Home } from "./components/Home";
 import { Layout } from "./components/Layout";
 
 export default function App(): React.ReactElement {
     return (
         <Layout>
-            <Route path="/" component={Home} />
+            <Routes>
+                <Route path="/" element={<Home />} />
+            </Routes>
         </Layout>
     );
 }

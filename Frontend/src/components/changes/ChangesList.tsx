@@ -90,7 +90,7 @@ export function ChangesList({
                                 name="Users"
                                 changes={changes}
                                 accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
-                                textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
+                                textSelector={useCallback((o: string) => (o === "" ? <i>No user</i> : o), [])}
                                 onChanged={onUsersFilterChanged}
                             />
                             <ChangeFilterSelector

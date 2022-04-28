@@ -54,7 +54,7 @@ export function ChangeFilterSelector({
     }, [changes, defaultOptions, accessor, onChanged]);
 
     const toggleOption = useCallback(
-        (optionKey) => {
+        (optionKey: string) => {
             setOptions((oldOptions) => {
                 const nextOptions = new Map(oldOptions);
 

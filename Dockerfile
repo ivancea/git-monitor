@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine as build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine as build
 WORKDIR /app
 
-RUN apk update && apk add nodejs nodejs-npm
+RUN apk update && apk add nodejs npm
 
 COPY *.csproj ./
 RUN dotnet restore
@@ -9,12 +9,12 @@ RUN dotnet restore
 COPY ./Frontend/package*.json ./Frontend/
 
 RUN cd Frontend \
-    && npm install
+    && npm ci
 
 COPY . .
 RUN dotnet publish -c Release -o build
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine
 WORKDIR /app
 
 COPY --from=build /app/build .
