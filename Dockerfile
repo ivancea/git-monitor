@@ -3,7 +3,10 @@ WORKDIR /app
 
 RUN apk update && apk add nodejs npm
 
-COPY *.csproj ./
+COPY ./Backend/*.csproj ./Backend/
+COPY ./Backend.Tests/*.csproj ./Backend.Tests/
+COPY *.sln ./
+
 RUN dotnet restore
 
 COPY ./Frontend/package*.json ./Frontend/
@@ -22,4 +25,4 @@ COPY --from=build /app/build .
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT [ "dotnet", "./git-monitor.dll" ]
+ENTRYPOINT [ "dotnet", "./Backend.dll" ]

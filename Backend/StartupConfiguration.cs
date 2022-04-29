@@ -73,10 +73,7 @@ namespace GitMonitor
             }
             catch (Exception exc)
             {
-                throw new ApplicationException("Error loading configuration: " + exc.Message +
-                    (exc.InnerException is null
-                        ? string.Empty
-                        : $" ({exc.InnerException.Message})"));
+                throw new ApplicationException("Error loading configuration", exc);
             }
 
             return next;

@@ -17,7 +17,7 @@ namespace GitMonitor.Services.ChangesTrackers
         /// </summary>
         /// <param name="repository">The git repository.</param>
         /// <param name="changes">The list of changes to fill.</param>
-        public BranchesTracker(Repository repository, List<Change> changes)
+        public BranchesTracker(IRepository repository, List<Change> changes)
             : base(repository, changes)
         {
             OldBranches = repository.Branches

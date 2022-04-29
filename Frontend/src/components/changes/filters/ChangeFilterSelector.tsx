@@ -1,7 +1,7 @@
 import { isNil } from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Col, Row } from "reactstrap";
-import { ChangeWrapper } from "../../types/changes";
+import { ChangeWrapper } from "../../../types/changes";
 
 type Props = {
     name: string;
@@ -71,7 +71,7 @@ export function ChangeFilterSelector({
     return (
         <Row>
             <Col className="text-right" xs="2">
-                {name}:{" "}
+                {name}:
             </Col>
             <Col xs="10">
                 {Array.from(options.keys())

@@ -39,8 +39,12 @@ namespace GitMonitor.Services
 
         private Timer? Timer { get; set; }
 
+        private IReadOnlyCollection<RepositoryDescriptor>? Repositories { get; set; }
+
         /// <summary>
         /// Configure the repositories notifications.
+        /// <br/>
+        /// Enables calls to <see cref="RefreshRepositoriesAsync"/> and activates a Timer that automatically calls it.
         /// </summary>
         /// <param name="refreshInterval">The repositories refresh interval in minutes.</param>
         /// <param name="repositories">The repositories to monitor.</param>
@@ -53,21 +57,32 @@ namespace GitMonitor.Services
 
             Logger.LogInformation($"Refreshing repositories every {refreshInterval} minutes");
 
+            Repositories = repositories.ToList();
+
             Timer = new Timer(
-                async s => await RefreshRepositoriesAsync(repositories),
+                async s => await RefreshRepositoriesAsync(),
                 null,
                 TimeSpan.FromMinutes(refreshInterval),
                 TimeSpan.FromMinutes(refreshInterval));
         }
 
-        private async Task RefreshRepositoriesAsync(IEnumerable<RepositoryDescriptor> repositories)
+        /// <summary>
+        /// Refreshes repositories, fetching, generating and sending changes to the clients.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task RefreshRepositoriesAsync()
         {
+            if (Repositories is null)
+            {
+                throw new InvalidOperationException("ConfigureRepositories must be called first");
+            }
+
             Logger.LogDebug($"Refreshing repositories");
 
             var changes = new Dictionary<string, List<Change>>();
             var errors = new Dictionary<string, string>();
 
-            foreach (var repository in repositories)
+            foreach (var repository in Repositories)
             {
                 try
                 {

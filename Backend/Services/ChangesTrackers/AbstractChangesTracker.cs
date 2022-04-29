@@ -6,7 +6,7 @@ using LibGit2Sharp;
 namespace GitMonitor.Services.ChangesTrackers
 {
     /// <summary>
-    /// base class for change trackers.<br/>
+    /// Base class for change trackers.<br/>
     /// It's intended use is to be put in the using block where the repository will be updated.
     /// </summary>
     public abstract class AbstractChangesTracker : IDisposable
@@ -16,7 +16,7 @@ namespace GitMonitor.Services.ChangesTrackers
         /// </summary>
         /// <param name="repository">The git repository.</param>
         /// <param name="changes">The list of changes to fill.</param>
-        protected AbstractChangesTracker(Repository repository, List<Change> changes)
+        protected AbstractChangesTracker(IRepository repository, List<Change> changes)
         {
             Repository = repository;
             Changes = changes;
@@ -26,7 +26,7 @@ namespace GitMonitor.Services.ChangesTrackers
         /// Gets the git repository.
         /// </summary>
         /// <value>The git repository.</value>
-        protected Repository Repository { get; }
+        protected IRepository Repository { get; }
 
         /// <summary>
         /// Gets the list of changes to fill.

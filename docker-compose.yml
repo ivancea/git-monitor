@@ -8,6 +8,6 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-            - "./data:/app/data"
+            - "./Backend/data:/app/data"
         environment:
             Application__ConfigPath: ./data/config.yml

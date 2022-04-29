@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import * as uuid from "uuid";
 import { config } from "../Config";
-import { ChangesNotification, ChangeWrapper } from "../types/changes";
+import { ChangeObjectType, ChangesNotification, ChangeWrapper } from "../types/changes";
 import { useLocalStorage } from "./useLocalStorage";
 import { useSignalR } from "./useSignalR";
 
@@ -10,6 +10,14 @@ export type Filter = {
     users: Map<string, boolean>;
     types: Map<string, boolean>;
     objectTypes: Map<string, boolean>;
+    branchRegex: RegExp;
+    tagRegex: RegExp;
+    commitRegex: RegExp;
+};
+
+export type CustomFilter = {
+    accessor: (change: ChangeWrapper) => string;
+    regex: RegExp;
 };
 
 export type ChangesData = {
@@ -35,6 +43,9 @@ export function useChanges(): ChangesData {
         users: new Map(),
         types: new Map(),
         objectTypes: new Map(),
+        branchRegex: /^.*$/,
+        tagRegex: /^.*$/,
+        commitRegex: /^.*$/,
     });
     const [notifyHiddenChanges, setNotifyHiddenChanges] = useState(true);
 
@@ -47,6 +58,21 @@ export function useChanges(): ChangesData {
             } else if (!filter.types.get(change.change.type)) {
                 return true;
             } else if (!filter.objectTypes.get(change.change.objectType)) {
+                return true;
+            } else if (
+                change.change.objectType === ChangeObjectType.Branch &&
+                !filter.branchRegex.test(change.change.objectName)
+            ) {
+                return true;
+            } else if (
+                change.change.objectType === ChangeObjectType.Tag &&
+                !filter.tagRegex.test(change.change.objectName)
+            ) {
+                return true;
+            } else if (
+                change.change.objectType === ChangeObjectType.Commit &&
+                !filter.commitRegex.test(change.change.objectName)
+            ) {
                 return true;
             }
 
