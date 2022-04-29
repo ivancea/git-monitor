@@ -3,6 +3,7 @@ import { useId } from "react-id-generator";
 import { Button, Col, Container, Row, UncontrolledCollapse } from "reactstrap";
 import { Filter } from "../../../hooks/useChanges";
 import { ChangeObjectType, ChangeType, ChangeWrapper } from "../../../types/changes";
+import { ChangeFilterRegexInput } from "./ChangeFilterRegexInput";
 import { ChangeFilterSelector } from "./ChangeFilterSelector";
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
 const changeTypes = Object.keys(ChangeType).filter((t) => typeof t === "string");
 const changeObjectTypes = Object.keys(ChangeObjectType).filter((t) => typeof t === "string");
 
-export function ChangesFilters({ changes, filter, setFilter }: Props): React.ReactElement {
+export function ChangesFilters({ changes, setFilter }: Props): React.ReactElement {
     const [filtersTogglerId] = useId();
 
     const useFilterChanged = (
@@ -34,9 +35,9 @@ export function ChangesFilters({ changes, filter, setFilter }: Props): React.Rea
     const onTypesFilterChanged = useFilterChanged("types");
     const onObjectTypesFilterChanged = useFilterChanged("objectTypes");
 
-    const onBranchFilterChanged = useFilterChanged("branch");
-    const onTagFilterChanged = useFilterChanged("tag");
-    const onCommitFilterChanged = useFilterChanged("commit");
+    const onBranchFilterChanged = useFilterChanged("branchRegex");
+    const onTagFilterChanged = useFilterChanged("tagRegex");
+    const onCommitFilterChanged = useFilterChanged("commitRegex");
 
     return (
         <Container>
@@ -64,7 +65,7 @@ export function ChangesFilters({ changes, filter, setFilter }: Props): React.Rea
                             name="Users"
                             changes={changes}
                             accessor={useCallback((c) => (c.change.user ? c.change.user.name : ""), [])}
-                            textSelector={useCallback((o) => (o === "" ? <i>No user</i> : o), [])}
+                            textSelector={useCallback((o: string) => (o === "" ? <i>No user</i> : o), [])}
                             onChanged={onUsersFilterChanged}
                         />
                         <ChangeFilterSelector
@@ -81,6 +82,9 @@ export function ChangesFilters({ changes, filter, setFilter }: Props): React.Rea
                             accessor={useCallback((c) => c.change.objectType, [])}
                             onChanged={onObjectTypesFilterChanged}
                         />
+                        <ChangeFilterRegexInput name="Branch regex" onChanged={onBranchFilterChanged} />
+                        <ChangeFilterRegexInput name="Tag regex" onChanged={onTagFilterChanged} />
+                        <ChangeFilterRegexInput name="Commit regex" onChanged={onCommitFilterChanged} />
                     </UncontrolledCollapse>
                 </Col>
             </Row>

@@ -10,9 +10,9 @@ export type Filter = {
     users: Map<string, boolean>;
     types: Map<string, boolean>;
     objectTypes: Map<string, boolean>;
-    branch: RegExp;
-    tag: RegExp;
-    commit: RegExp;
+    branchRegex: RegExp;
+    tagRegex: RegExp;
+    commitRegex: RegExp;
 };
 
 export type CustomFilter = {
@@ -43,9 +43,9 @@ export function useChanges(): ChangesData {
         users: new Map(),
         types: new Map(),
         objectTypes: new Map(),
-        branch: /.*/,
-        tag: /.*/,
-        commit: /.*/,
+        branchRegex: /^.*$/,
+        tagRegex: /^.*$/,
+        commitRegex: /^.*$/,
     });
     const [notifyHiddenChanges, setNotifyHiddenChanges] = useState(true);
 
@@ -61,7 +61,17 @@ export function useChanges(): ChangesData {
                 return true;
             } else if (
                 change.change.objectType === ChangeObjectType.Branch &&
-                !filter.branch.test(change.change.objectName)
+                !filter.branchRegex.test(change.change.objectName)
+            ) {
+                return true;
+            } else if (
+                change.change.objectType === ChangeObjectType.Tag &&
+                !filter.tagRegex.test(change.change.objectName)
+            ) {
+                return true;
+            } else if (
+                change.change.objectType === ChangeObjectType.Commit &&
+                !filter.commitRegex.test(change.change.objectName)
             ) {
                 return true;
             }
