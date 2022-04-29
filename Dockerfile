@@ -21,6 +21,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine
 WORKDIR /app
 
 COPY --from=build /app/build .
+COPY --from=build /app/Frontend/build Frontend
 
 EXPOSE 80
 EXPOSE 443

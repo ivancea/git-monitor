@@ -46,7 +46,7 @@ namespace GitMonitor
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "../Frontend/build";
+                configuration.RootPath = "Frontend";
             });
 
             services.AddSignalR();
