@@ -17,8 +17,8 @@ Tracked repositories may be:
 
 ## Build
 
-- .NET 5
-- Node 12+ and NPM
+- .NET 6
+- Node 16+ and NPM
 
 ## To launch with Docker
 
